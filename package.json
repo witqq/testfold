@@ -1,5 +1,5 @@
 {
-  "name": "@anthropic/test-runner",
+  "name": "claude-test-runner",
   "version": "0.1.0",
   "description": "Unified test runner with Jest and Playwright support, parallel execution, and detailed failure reporting",
   "type": "module",

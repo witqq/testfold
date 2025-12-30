@@ -122,7 +122,7 @@
 
 ### NFR-1: Простота интеграции
 
-- Установка: `npm install @anthropic/test-runner`
+- Установка: `npm install claude-test-runner`
 - Минимальная конфигурация для старта
 - Совместимость с существующими Jest/Playwright проектами
 
@@ -150,7 +150,7 @@
 
 ```typescript
 // test-runner.config.ts
-import { defineConfig } from '@anthropic/test-runner';
+import { defineConfig } from 'claude-test-runner';
 
 export default defineConfig({
   // Директория для artifacts
@@ -241,7 +241,7 @@ npx test-runner --config ./custom-config.ts
 ### Programmatic API
 
 ```typescript
-import { TestRunner, defineConfig } from '@anthropic/test-runner';
+import { TestRunner, defineConfig } from 'claude-test-runner';
 
 const config = defineConfig({ /* ... */ });
 const runner = new TestRunner(config);

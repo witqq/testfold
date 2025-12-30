@@ -1,4 +1,4 @@
-# Project Memory: @anthropic/test-runner
+# Project Memory: claude-test-runner
 
 ## Project Type
 

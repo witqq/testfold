@@ -1,5 +1,5 @@
 /**
- * @anthropic/test-runner
+ * claude-test-runner
  *
  * Unified test runner with Jest and Playwright support,
  * parallel execution, and detailed failure reporting.
