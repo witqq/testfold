@@ -1,0 +1,71 @@
+{
+  "numFailedTestSuites": 1,
+  "numFailedTests": 2,
+  "numPassedTestSuites": 1,
+  "numPassedTests": 3,
+  "numPendingTestSuites": 0,
+  "numPendingTests": 0,
+  "numRuntimeErrorTestSuites": 0,
+  "numTodoTests": 0,
+  "numTotalTestSuites": 2,
+  "numTotalTests": 5,
+  "success": false,
+  "testResults": [
+    {
+      "name": "/tests/unit/utils.test.ts",
+      "status": "passed",
+      "startTime": 1703980800000,
+      "endTime": 1703980801500,
+      "assertionResults": [
+        {
+          "ancestorTitles": ["stripAnsi"],
+          "title": "should remove ANSI codes",
+          "status": "passed",
+          "duration": 5,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["sanitizeFilename"],
+          "title": "should sanitize special characters",
+          "status": "passed",
+          "duration": 3,
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/tests/unit/parser.test.ts",
+      "status": "failed",
+      "startTime": 1703980801500,
+      "endTime": 1703980803000,
+      "assertionResults": [
+        {
+          "ancestorTitles": ["JestParser"],
+          "title": "should parse success results",
+          "status": "passed",
+          "duration": 10,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["JestParser"],
+          "title": "should extract failure details",
+          "status": "failed",
+          "duration": 15,
+          "failureMessages": [
+            "Error: expect(received).toBe(expected)\n\nExpected: 2\nReceived: 0\n\n    at Object.<anonymous> (/tests/unit/parser.test.ts:45:20)"
+          ]
+        },
+        {
+          "ancestorTitles": ["JestParser"],
+          "title": "should handle malformed JSON",
+          "status": "failed",
+          "duration": 8,
+          "failureMessages": [
+            "\u001b[31mTypeError: Cannot read properties of undefined (reading 'map')\u001b[0m\n    at JestParser.parse (/src/parsers/jest.ts:72:15)\n    at Object.<anonymous> (/tests/unit/parser.test.ts:58:22)"
+          ]
+        }
+      ]
+    }
+  ],
+  "wasInterrupted": false
+}

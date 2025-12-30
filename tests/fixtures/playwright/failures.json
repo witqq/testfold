@@ -1,0 +1,120 @@
+{
+  "config": {},
+  "suites": [
+    {
+      "title": "Auth Tests",
+      "file": "tests/e2e/auth.spec.ts",
+      "specs": [
+        {
+          "title": "should login successfully",
+          "ok": true,
+          "tests": [
+            {
+              "title": "should login successfully",
+              "results": [
+                {
+                  "status": "passed",
+                  "duration": 1500,
+                  "attachments": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "should handle invalid credentials",
+          "ok": false,
+          "tests": [
+            {
+              "title": "should handle invalid credentials",
+              "results": [
+                {
+                  "status": "failed",
+                  "duration": 3000,
+                  "error": {
+                    "message": "Timed out waiting for element",
+                    "stack": "TimeoutError: Timed out waiting for element\n    at LoginPage.waitForError (tests/e2e/pages/login.ts:45:5)\n    at tests/e2e/auth.spec.ts:28:10"
+                  },
+                  "stdout": [
+                    {"text": "Attempting login with invalid credentials"},
+                    {"text": "Waiting for error message..."}
+                  ],
+                  "stderr": [
+                    {"text": "Warning: Element not found within timeout"}
+                  ],
+                  "attachments": [
+                    {"name": "screenshot", "path": "test-results/auth-invalid-1-screenshot.png"},
+                    {"name": "trace", "path": "test-results/auth-invalid-1-trace.zip"}
+                  ]
+                },
+                {
+                  "status": "failed",
+                  "duration": 3500,
+                  "error": {
+                    "message": "Timed out waiting for element",
+                    "stack": "TimeoutError: Timed out waiting for element\n    at LoginPage.waitForError (tests/e2e/pages/login.ts:45:5)\n    at tests/e2e/auth.spec.ts:28:10"
+                  },
+                  "attachments": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "suites": []
+    },
+    {
+      "title": "Dashboard Tests",
+      "file": "tests/e2e/dashboard.spec.ts",
+      "specs": [
+        {
+          "title": "should load widgets",
+          "ok": false,
+          "tests": [
+            {
+              "title": "should load widgets",
+              "results": [
+                {
+                  "status": "timedOut",
+                  "duration": 30000,
+                  "errors": [
+                    {
+                      "message": "Test timeout of 30000ms exceeded",
+                      "stack": "Test timeout of 30000ms exceeded"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "should skip on CI",
+          "ok": true,
+          "tests": [
+            {
+              "title": "should skip on CI",
+              "results": [
+                {
+                  "status": "skipped",
+                  "duration": 0,
+                  "attachments": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "suites": []
+    }
+  ],
+  "stats": {
+    "startTime": "2024-01-01T00:00:00.000Z",
+    "duration": 38000,
+    "expected": 1,
+    "unexpected": 2,
+    "skipped": 1,
+    "flaky": 0
+  }
+}

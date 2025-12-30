@@ -23,12 +23,18 @@ export const SuiteSchema = z.object({
   parser: z.string().optional(),
 });
 
-export const HooksSchema = z.object({
-  beforeAll: z.function().optional(),
-  afterAll: z.function().optional(),
-  beforeSuite: z.function().optional(),
-  afterSuite: z.function().optional(),
-});
+export const HooksSchema = z
+  .object({
+    beforeAll: z.function().args().returns(z.promise(z.void())).optional(),
+    afterAll: z.function().args(z.any()).returns(z.promise(z.void())).optional(),
+    beforeSuite: z.function().args(z.any()).returns(z.promise(z.void())).optional(),
+    afterSuite: z
+      .function()
+      .args(z.any(), z.any())
+      .returns(z.promise(z.void()))
+      .optional(),
+  })
+  .optional();
 
 export const ConfigSchema = z.object({
   artifactsDir: z.string().min(1),
@@ -39,7 +45,7 @@ export const ConfigSchema = z.object({
     .array(z.string())
     .optional()
     .default(['console', 'json', 'markdown-failures']),
-  hooks: HooksSchema.optional(),
+  hooks: HooksSchema,
 });
 
 export type ValidatedConfig = z.infer<typeof ConfigSchema>;

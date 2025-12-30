@@ -1,0 +1,76 @@
+{
+  "config": {},
+  "suites": [
+    {
+      "title": "Auth Tests",
+      "file": "tests/e2e/auth.spec.ts",
+      "specs": [
+        {
+          "title": "should login successfully",
+          "ok": true,
+          "tests": [
+            {
+              "title": "should login successfully",
+              "results": [
+                {
+                  "status": "passed",
+                  "duration": 1500,
+                  "attachments": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "should logout",
+          "ok": true,
+          "tests": [
+            {
+              "title": "should logout",
+              "results": [
+                {
+                  "status": "passed",
+                  "duration": 800,
+                  "attachments": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "suites": [
+        {
+          "title": "Password Reset",
+          "file": "tests/e2e/auth.spec.ts",
+          "specs": [
+            {
+              "title": "should send reset email",
+              "ok": true,
+              "tests": [
+                {
+                  "title": "should send reset email",
+                  "results": [
+                    {
+                      "status": "passed",
+                      "duration": 2000,
+                      "attachments": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "suites": []
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "startTime": "2024-01-01T00:00:00.000Z",
+    "duration": 4500,
+    "expected": 3,
+    "unexpected": 0,
+    "skipped": 0,
+    "flaky": 0
+  }
+}

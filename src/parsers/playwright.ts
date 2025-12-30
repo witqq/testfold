@@ -124,27 +124,38 @@ export class PlaywrightParser implements Parser {
               lastResult.error?.stack ||
               lastResult.errors?.map((e) => e.stack).join('\n');
 
-            const stdout = lastResult.stdout
-              ?.map((s) => s.text)
-              .filter(Boolean)
-              .join('\n');
+            // Collect stdout/stderr/attachments from all results (all retry attempts)
+            const allStdout: string[] = [];
+            const allStderr: string[] = [];
+            const allAttachments: Array<{ name: string; path: string }> = [];
 
-            const stderr = lastResult.stderr
-              ?.map((s) => s.text)
-              .filter(Boolean)
-              .join('\n');
+            for (const result of test.results) {
+              if (result.stdout) {
+                for (const s of result.stdout) {
+                  if (s.text) allStdout.push(s.text);
+                }
+              }
+              if (result.stderr) {
+                for (const s of result.stderr) {
+                  if (s.text) allStderr.push(s.text);
+                }
+              }
+              if (result.attachments) {
+                for (const a of result.attachments) {
+                  allAttachments.push({ name: a.name, path: a.path });
+                }
+              }
+            }
 
             failures.push({
               testName: fullName,
               filePath: suite.file,
               error,
               stack,
-              stdout: stdout || undefined,
-              stderr: stderr || undefined,
-              attachments: lastResult.attachments?.map((a) => ({
-                name: a.name,
-                path: a.path,
-              })),
+              stdout: allStdout.length > 0 ? allStdout.join('\n') : undefined,
+              stderr: allStderr.length > 0 ? allStderr.join('\n') : undefined,
+              attachments:
+                allAttachments.length > 0 ? allAttachments : undefined,
               duration: lastResult.duration,
             });
           }

@@ -111,6 +111,72 @@ npm link
 npm link claude-test-runner
 ```
 
+## Migration from Local Test Scripts
+
+Projects with custom `tests/scripts/run-all-tests.js` can migrate to claude-test-runner:
+
+### 1. Install
+
+```bash
+npm link claude-test-runner
+```
+
+### 2. Create config
+
+`test-runner.config.ts`:
+```typescript
+import type { Config } from 'claude-test-runner';
+
+const config: Config = {
+  artifactsDir: './test-results',
+  reporters: ['console', 'json', 'markdown-failures'],
+  suites: [
+    {
+      name: 'Unit',
+      type: 'jest',
+      command: 'node --experimental-vm-modules node_modules/jest/bin/jest.js --json --outputFile test-results/unit.json',
+      resultFile: 'unit.json',
+    },
+    {
+      name: 'E2E',
+      type: 'playwright',
+      command: 'npx playwright test --reporter=json',
+      resultFile: 'playwright-report.json',
+    },
+  ],
+};
+
+export default config;
+```
+
+### 3. Update npm scripts
+
+```json
+{
+  "scripts": {
+    "test": "node --import tsx tests/scripts/run-all-tests.js"
+  }
+}
+```
+
+### 4. Replace run-all-tests.js
+
+```javascript
+import { TestRunner } from 'claude-test-runner';
+
+const runner = await TestRunner.fromConfigFile();
+const results = await runner.run();
+process.exit(results.success ? 0 : 1);
+```
+
+### 5. Artifacts
+
+After migration:
+- `summary.json` - aggregated results
+- `test-results/*.json` - raw parser output
+- `test-results/*.log` - stdout/stderr
+- `test-results/failures/*.md` - failure reports per test
+
 ## Code Style
 
 - ESLint for linting

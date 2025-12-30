@@ -10,7 +10,7 @@
 ## Running Tests
 
 ```bash
-# All tests
+# All tests (self-testing via TestRunner)
 npm test
 
 # Unit tests only
@@ -18,6 +18,61 @@ npm run test:unit
 
 # Integration tests only
 npm run test:integration
+```
+
+## Self-Testing
+
+The module tests itself using its own `TestRunner`:
+
+```bash
+npm test
+```
+
+This runs `tests/scripts/run-all-tests.js` which:
+1. Loads `test-runner.config.ts`
+2. Creates `TestRunner.fromConfigFile()`
+3. Executes configured suites
+4. Outputs console summary table
+5. Generates `summary.json`
+
+### Configuration
+
+`test-runner.config.ts`:
+```typescript
+const config: Config = {
+  artifactsDir: './test-results',
+  reporters: ['console', 'json'],
+  suites: [
+    {
+      name: 'Unit',
+      type: 'jest',
+      command: 'node --experimental-vm-modules node_modules/jest/bin/jest.js ...',
+      resultFile: 'unit.json',
+    },
+  ],
+};
+```
+
+### Output
+
+Console summary:
+```
+Suite                Passed  Failed  Skipped    Time
+───────────────────────────────────────────────────────
+Unit                    37      0       0    0.4s
+───────────────────────────────────────────────────────
+TOTAL                   37      0       0    1.2s
+
+✓ ALL TESTS PASSED
+```
+
+JSON summary (`summary.json`):
+```json
+{
+  "success": true,
+  "passRate": 100,
+  "totals": { "passed": 37, "failed": 0, "skipped": 0 }
+}
 ```
 
 ## Test Structure
@@ -31,7 +86,8 @@ tests/
 │   ├── reporters/
 │   │   └── console.test.ts   # Console reporter tests
 │   └── utils/
-│       └── ansi.test.ts      # ANSI stripping tests
+│       ├── ansi.test.ts      # ANSI stripping tests
+│       └── sanitize.test.ts  # Filename sanitization tests
 ├── integration/              # Integration tests
 │   └── runner.test.ts        # Full runner tests
 ├── fixtures/                 # Test data

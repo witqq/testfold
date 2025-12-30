@@ -16,5 +16,6 @@ export function stripAnsi(text: string): string {
  * Check if text contains ANSI codes
  */
 export function hasAnsi(text: string): boolean {
-  return ANSI_REGEX.test(text);
+  // Use fresh regex to avoid global regex lastIndex state bug
+  return /\x1b\[[0-9;]*m/.test(text);
 }

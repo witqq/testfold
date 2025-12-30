@@ -1,0 +1,74 @@
+{
+  "numFailedTestSuites": 0,
+  "numFailedTests": 0,
+  "numPassedTestSuites": 2,
+  "numPassedTests": 5,
+  "numPendingTestSuites": 0,
+  "numPendingTests": 1,
+  "numRuntimeErrorTestSuites": 0,
+  "numTodoTests": 0,
+  "numTotalTestSuites": 2,
+  "numTotalTests": 6,
+  "success": true,
+  "testResults": [
+    {
+      "name": "/tests/unit/utils.test.ts",
+      "status": "passed",
+      "startTime": 1703980800000,
+      "endTime": 1703980801500,
+      "assertionResults": [
+        {
+          "ancestorTitles": ["stripAnsi"],
+          "title": "should remove ANSI codes",
+          "status": "passed",
+          "duration": 5,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["stripAnsi"],
+          "title": "should handle empty string",
+          "status": "passed",
+          "duration": 2,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["sanitizeFilename"],
+          "title": "should sanitize special characters",
+          "status": "passed",
+          "duration": 3,
+          "failureMessages": []
+        }
+      ]
+    },
+    {
+      "name": "/tests/unit/parser.test.ts",
+      "status": "passed",
+      "startTime": 1703980801500,
+      "endTime": 1703980803000,
+      "assertionResults": [
+        {
+          "ancestorTitles": ["JestParser"],
+          "title": "should parse success results",
+          "status": "passed",
+          "duration": 10,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["JestParser"],
+          "title": "should handle missing file",
+          "status": "passed",
+          "duration": 5,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["JestParser"],
+          "title": "should be implemented later",
+          "status": "pending",
+          "duration": null,
+          "failureMessages": []
+        }
+      ]
+    }
+  ],
+  "wasInterrupted": false
+}

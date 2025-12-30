@@ -85,7 +85,7 @@ export class JestParser implements Parser {
         testResults.push({
           name: fullName,
           file: fileResult.name,
-          status: assertion.status,
+          status: assertion.status === 'pending' ? 'skipped' : assertion.status,
           duration: assertion.duration ?? 0,
         });
 

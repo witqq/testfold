@@ -107,15 +107,17 @@ export class Orchestrator {
 
     // Determine environment
     const envConfig =
-      this.environment && suite.environments?.[this.environment];
+      this.environment && suite.environments
+        ? suite.environments[this.environment]
+        : undefined;
 
     // Build env variables
     const env: Record<string, string> = {
       ...suite.env,
-      ...(envConfig?.env ?? {}),
+      ...(envConfig && typeof envConfig === 'object' ? envConfig.env : {}),
     };
 
-    if (envConfig?.baseUrl) {
+    if (envConfig && typeof envConfig === 'object' && envConfig.baseUrl) {
       env['TEST_BASE_URL'] = envConfig.baseUrl;
     }
 
