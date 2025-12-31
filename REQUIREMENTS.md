@@ -122,7 +122,7 @@
 
 ### NFR-1: Простота интеграции
 
-- Установка: `npm install claude-test-runner`
+- Установка: `npm install testfold`
 - Минимальная конфигурация для старта
 - Совместимость с существующими Jest/Playwright проектами
 
@@ -149,8 +149,8 @@
 ### Конфигурационный файл
 
 ```typescript
-// test-runner.config.ts
-import { defineConfig } from 'claude-test-runner';
+// testfold.config.ts
+import { defineConfig } from 'testfold';
 
 export default defineConfig({
   // Директория для artifacts
@@ -217,31 +217,31 @@ export default defineConfig({
 
 ```bash
 # Запуск всех suites
-npx test-runner
+npx testfold
 
 # Запуск конкретного suite
-npx test-runner unit
-npx test-runner "Unit" "Integration"
+npx testfold unit
+npx testfold "Unit" "Integration"
 
 # Multi-environment
-npx test-runner --env staging
-npx test-runner e2e --env prod
+npx testfold --env staging
+npx testfold e2e --env prod
 
 # Execution modes
-npx test-runner --no-parallel    # Последовательно
-npx test-runner --fail-fast      # Остановка при ошибке
+npx testfold --no-parallel    # Последовательно
+npx testfold --fail-fast      # Остановка при ошибке
 
 # Specific test file (передаётся в команду suite)
-npx test-runner unit -- path/to/test.ts
+npx testfold unit -- path/to/test.ts
 
 # Config file
-npx test-runner --config ./custom-config.ts
+npx testfold --config ./custom-config.ts
 ```
 
 ### Programmatic API
 
 ```typescript
-import { TestRunner, defineConfig } from 'claude-test-runner';
+import { TestRunner, defineConfig } from 'testfold';
 
 const config = defineConfig({ /* ... */ });
 const runner = new TestRunner(config);

@@ -1,12 +1,12 @@
 {
-  "name": "claude-test-runner",
-  "version": "0.1.0",
+  "name": "testfold",
+  "version": "0.1.1",
   "description": "Unified test runner with Jest and Playwright support, parallel execution, and detailed failure reporting",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "test-runner": "./dist/cli/index.js"
+    "testfold": "./dist/cli/index.js"
   },
   "exports": {
     ".": {
@@ -37,8 +37,16 @@
     "parallel",
     "reporter"
   ],
-  "author": "",
+  "author": "Mike",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/witqq/testfold.git"
+  },
+  "homepage": "https://github.com/witqq/testfold#readme",
+  "bugs": {
+    "url": "https://github.com/witqq/testfold/issues"
+  },
   "engines": {
     "node": ">=20.0.0"
   },

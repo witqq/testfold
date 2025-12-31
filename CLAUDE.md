@@ -1,4 +1,4 @@
-# Project Memory: claude-test-runner
+# Project Memory: testfold
 
 ## Project Type
 
@@ -134,3 +134,5 @@ interface Reporter {
 ## Requirements
 
 Полные требования: `/Users/mike/WebstormProjects/claude-test-runner/REQUIREMENTS.md`
+
+**Note:** Локальная папка проекта временно называется `claude-test-runner`, но пакет и репозиторий переименованы в `testfold`.

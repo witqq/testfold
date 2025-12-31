@@ -1,0 +1,51 @@
+{
+  "numFailedTestSuites": 1,
+  "numFailedTests": 0,
+  "numPassedTestSuites": 1,
+  "numPassedTests": 3,
+  "numPendingTestSuites": 0,
+  "numPendingTests": 0,
+  "numTotalTestSuites": 2,
+  "numTotalTests": 3,
+  "success": false,
+  "testResults": [
+    {
+      "name": "/path/to/crashed.test.ts",
+      "status": "failed",
+      "message": "  ● Test suite failed to run\n\n    ReferenceError: __dirname is not defined\n\n      at tests/crashed.test.ts:10:25",
+      "assertionResults": [],
+      "startTime": 1767205704583,
+      "endTime": 1767205704583
+    },
+    {
+      "name": "/path/to/passing.test.ts",
+      "status": "passed",
+      "message": "",
+      "assertionResults": [
+        {
+          "ancestorTitles": ["MyTest"],
+          "title": "should work",
+          "status": "passed",
+          "duration": 5,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["MyTest"],
+          "title": "should also work",
+          "status": "passed",
+          "duration": 3,
+          "failureMessages": []
+        },
+        {
+          "ancestorTitles": ["MyTest"],
+          "title": "should pass too",
+          "status": "passed",
+          "duration": 2,
+          "failureMessages": []
+        }
+      ],
+      "startTime": 1767205704100,
+      "endTime": 1767205704200
+    }
+  ]
+}

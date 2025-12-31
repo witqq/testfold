@@ -79,4 +79,45 @@ describe('JestParser', () => {
       expect(result.failures).toHaveLength(0);
     });
   });
+
+  describe('handle crashed test suite', () => {
+    it('should count crashed suite as failed', async () => {
+      const result = await parser.parse(
+        resolve(fixturesDir, 'crashed-suite.json'),
+      );
+
+      expect(result.passed).toBe(3);
+      expect(result.failed).toBe(1);
+      expect(result.success).toBe(false);
+    });
+
+    it('should extract crash error message', async () => {
+      const result = await parser.parse(
+        resolve(fixturesDir, 'crashed-suite.json'),
+      );
+
+      expect(result.failures).toHaveLength(1);
+      expect(result.failures[0].testName).toBe('Test Suite Crash');
+      expect(result.failures[0].error).toContain('ReferenceError');
+      expect(result.failures[0].error).toContain('__dirname is not defined');
+    });
+
+    it('should include crashed suite file path', async () => {
+      const result = await parser.parse(
+        resolve(fixturesDir, 'crashed-suite.json'),
+      );
+
+      expect(result.failures[0].filePath).toBe('/path/to/crashed.test.ts');
+    });
+
+    it('should still parse passing tests from other suites', async () => {
+      const result = await parser.parse(
+        resolve(fixturesDir, 'crashed-suite.json'),
+      );
+
+      expect(result.testResults).toBeDefined();
+      expect(result.testResults?.length).toBe(3);
+      expect(result.testResults?.[0].status).toBe('passed');
+    });
+  });
 });

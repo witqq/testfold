@@ -1,4 +1,4 @@
-# claude-test-runner
+# testfold
 
 Test runner designed for AI agent workflows. Runs Jest/Playwright suites and generates structured reports optimized for LLM consumption.
 
@@ -34,12 +34,12 @@ Agent reads `summary.json` (50 tokens) instead of scrolling through 2000 lines o
 ## Setup
 
 ```bash
-npm install claude-test-runner
+npm install testfold
 ```
 
-Create `test-runner.config.ts`:
+Create `testfold.config.ts`:
 ```typescript
-import type { Config } from 'claude-test-runner';
+import type { Config } from 'testfold';
 
 export default {
   artifactsDir: './test-results',
