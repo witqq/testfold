@@ -10,6 +10,7 @@ import type { FailureDetail } from '../config/types.js';
 interface JestResult {
   numPassedTests: number;
   numFailedTests: number;
+  numFailedTestSuites: number;
   numPendingTests: number;
   numTotalTests: number;
   success: boolean;
@@ -19,6 +20,7 @@ interface JestResult {
 interface JestTestFileResult {
   name: string;
   status: 'passed' | 'failed';
+  message: string;
   assertionResults: JestAssertionResult[];
   startTime: number;
   endTime: number;
@@ -73,9 +75,25 @@ export class JestParser implements Parser {
     const testResults: TestResult[] = [];
     let totalDuration = 0;
 
+    let crashedSuites = 0;
+
     for (const fileResult of data.testResults) {
       const fileDuration = fileResult.endTime - fileResult.startTime;
       totalDuration += fileDuration;
+
+      // Handle crashed test suite (failed to run, no assertions)
+      if (
+        fileResult.status === 'failed' &&
+        fileResult.assertionResults.length === 0
+      ) {
+        crashedSuites++;
+        failures.push({
+          testName: 'Test Suite Crash',
+          filePath: fileResult.name,
+          error: fileResult.message || 'Test suite failed to run',
+        });
+        continue;
+      }
 
       for (const assertion of fileResult.assertionResults) {
         const fullName = [...assertion.ancestorTitles, assertion.title].join(
@@ -102,10 +120,10 @@ export class JestParser implements Parser {
 
     return {
       passed: data.numPassedTests,
-      failed: data.numFailedTests,
+      failed: data.numFailedTests + crashedSuites,
       skipped: data.numPendingTests,
       duration: totalDuration,
-      success: data.success,
+      success: data.success && crashedSuites === 0,
       failures,
       testResults,
     };
