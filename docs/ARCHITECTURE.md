@@ -2,7 +2,7 @@
 
 ## Overview
 
-claude-test-runner is a unified test runner that orchestrates multiple test frameworks (Jest, Playwright) with parallel execution and detailed failure reporting.
+testfold is a unified test runner that orchestrates multiple test frameworks (Jest, Playwright) with parallel execution and detailed failure reporting.
 
 ## Layer Structure
 

@@ -1,0 +1,9 @@
+{
+  "name": "testfold-integration-test",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "testfold": "^0.1.0"
+  }
+}

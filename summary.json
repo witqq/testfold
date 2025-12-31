@@ -1,20 +1,20 @@
 {
-  "timestamp": "2025-12-30T20:20:22.944Z",
+  "timestamp": "2025-12-31T18:36:33.853Z",
   "success": true,
   "passRate": 100,
   "totals": {
-    "passed": 37,
+    "passed": 53,
     "failed": 0,
     "skipped": 0,
-    "duration": 289
+    "duration": 3064
   },
   "suites": [
     {
       "name": "Unit",
-      "passed": 37,
+      "passed": 53,
       "failed": 0,
       "skipped": 0,
-      "duration": 289,
+      "duration": 3064,
       "success": true,
       "resultFile": "test-results/unit.json",
       "logFile": "test-results/unit.log"

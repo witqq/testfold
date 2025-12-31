@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * CLI entry point for claude-test-runner
+ * CLI entry point for testfold
  */
 
 import { parseArgs } from './args.js';
@@ -17,7 +17,7 @@ async function main(): Promise<void> {
   }
 
   if (args.version) {
-    console.log('claude-test-runner v0.1.0');
+    console.log('testfold v0.1.0');
     process.exit(0);
   }
 
@@ -43,10 +43,10 @@ async function main(): Promise<void> {
 
 function printHelp(): void {
   console.log(`
-claude-test-runner - Unified test runner for Jest and Playwright
+testfold - Unified test runner for Jest and Playwright
 
 Usage:
-  test-runner [suites...] [options]
+  testfold [suites...] [options]
 
 Options:
   --config, -c <path>   Config file path (default: test-runner.config.ts)
@@ -57,10 +57,10 @@ Options:
   --version, -v         Show version
 
 Examples:
-  test-runner                     Run all suites
-  test-runner unit integration    Run specific suites
-  test-runner --env staging       Run with staging environment
-  test-runner -c custom.config.ts Use custom config
+  testfold                        Run all suites
+  testfold unit integration       Run specific suites
+  testfold --env staging          Run with staging environment
+  testfold -c custom.config.ts    Use custom config
 `);
 }
 

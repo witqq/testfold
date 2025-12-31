@@ -1,5 +1,5 @@
 /**
- * Self-testing configuration for claude-test-runner
+ * Self-testing configuration for testfold
  * The module tests itself using its own TestRunner
  */
 
@@ -17,7 +17,7 @@ const config: Config = {
       command:
         'node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js --testPathPattern tests/unit --json --outputFile test-results/unit.json',
       resultFile: 'unit.json',
-      timeout: 60000,
+      timeout: 120000,
     },
   ],
 };
