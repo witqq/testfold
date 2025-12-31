@@ -10,7 +10,7 @@
 ```bash
 # Clone repository
 git clone <repo-url>
-cd claude-test-runner
+cd testfold
 
 # Install dependencies
 npm install
@@ -108,24 +108,24 @@ npm run build
 npm link
 
 # In target project
-npm link claude-test-runner
+npm link testfold
 ```
 
 ## Migration from Local Test Scripts
 
-Projects with custom `tests/scripts/run-all-tests.js` can migrate to claude-test-runner:
+Projects with custom `tests/scripts/run-all-tests.js` can migrate to testfold:
 
 ### 1. Install
 
 ```bash
-npm link claude-test-runner
+npm link testfold
 ```
 
 ### 2. Create config
 
-`test-runner.config.ts`:
+`testfold.config.ts`:
 ```typescript
-import type { Config } from 'claude-test-runner';
+import type { Config } from 'testfold';
 
 const config: Config = {
   artifactsDir: './test-results',
@@ -162,7 +162,7 @@ export default config;
 ### 4. Replace run-all-tests.js
 
 ```javascript
-import { TestRunner } from 'claude-test-runner';
+import { TestRunner } from 'testfold';
 
 const runner = await TestRunner.fromConfigFile();
 const results = await runner.run();

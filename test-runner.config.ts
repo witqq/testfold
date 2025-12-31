@@ -1,5 +1,5 @@
 /**
- * Self-testing configuration for claude-test-runner
+ * Self-testing configuration for testfold
  * The module tests itself using its own TestRunner
  */
 
