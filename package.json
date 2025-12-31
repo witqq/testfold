@@ -1,6 +1,6 @@
 {
   "name": "testfold",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Unified test runner with Jest and Playwright support, parallel execution, and detailed failure reporting",
   "type": "module",
   "main": "./dist/index.js",
