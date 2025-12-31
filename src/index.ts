@@ -1,5 +1,5 @@
 /**
- * claude-test-runner
+ * testfold
  *
  * Unified test runner with Jest and Playwright support,
  * parallel execution, and detailed failure reporting.
