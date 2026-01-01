@@ -4,9 +4,19 @@
  * CLI entry point for testfold
  */
 
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parseArgs } from './args.js';
 import { TestRunner } from '../core/runner.js';
 import { loadConfig } from '../config/loader.js';
+
+function getVersion(): string {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const pkgPath = join(__dirname, '..', '..', 'package.json');
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+  return pkg.version;
+}
 
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
@@ -17,7 +27,7 @@ async function main(): Promise<void> {
   }
 
   if (args.version) {
-    console.log('testfold v0.1.0');
+    console.log(`testfold v${getVersion()}`);
     process.exit(0);
   }
 
@@ -31,6 +41,8 @@ async function main(): Promise<void> {
     // Run tests
     const results = await runner.run(args.suites, {
       env: args.env,
+      reporter: args.reporter,
+      passThrough: args.passThrough,
     });
 
     // Exit with appropriate code
@@ -46,21 +58,27 @@ function printHelp(): void {
 testfold - Unified test runner for Jest and Playwright
 
 Usage:
-  testfold [suites...] [options]
+  testfold [suites...] [options] [-- pass-through-args]
 
 Options:
-  --config, -c <path>   Config file path (default: test-runner.config.ts)
-  --env, -e <name>      Environment name (local, staging, prod)
-  --no-parallel         Run suites sequentially
-  --fail-fast           Stop on first failure
-  --help, -h            Show this help
-  --version, -v         Show version
+  --config, -c <path>     Config file path (default: test-runner.config.ts)
+  --env, -e <name>        Environment name (local, staging, prod)
+  --reporter, -r <name>   Override config reporters (console, json, markdown-failures)
+  --no-parallel           Run suites sequentially
+  --fail-fast             Stop on first failure
+  --help, -h              Show this help
+  --version, -v           Show version
+
+Pass-through Arguments:
+  Arguments after -- are passed directly to test frameworks.
 
 Examples:
-  testfold                        Run all suites
-  testfold unit integration       Run specific suites
-  testfold --env staging          Run with staging environment
-  testfold -c custom.config.ts    Use custom config
+  testfold                              Run all suites
+  testfold unit integration             Run specific suites
+  testfold --env staging                Run with staging environment
+  testfold -c custom.config.ts          Use custom config
+  testfold -r json                      Use only JSON reporter
+  testfold -- --testNamePattern="auth"  Pass args to test framework
 `);
 }
 

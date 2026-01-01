@@ -48,9 +48,11 @@ testfold is a unified test runner that orchestrates multiple test frameworks (Je
 ### Reporters (`src/reporters/`)
 
 - **types.ts** - `Reporter` interface
-- **console.ts** - Colored terminal output with summary table
+- **console.ts** - Colored terminal output with summary table, artifact inventory, and test hierarchy display
 - **json.ts** - Generates `summary.json`
-- **markdown.ts** - Individual failure reports in Markdown
+- **markdown.ts** - Individual failure reports in Markdown with test hierarchy
+- **timing.ts** - Generates `timing.json` with tests sorted by duration
+- **text.ts** - Plain text output for CI/tool integration (no ANSI, no markdown)
 
 ### Utils (`src/utils/`)
 
@@ -180,6 +182,23 @@ hooks: {
   afterSuite: async (suite, result) => { /* suite cleanup */ }
 }
 ```
+
+## Artifact Management
+
+When running specific suites (`testfold unit`), only artifacts for those suites are cleaned before execution. Artifacts from other suites are preserved:
+
+```
+test-results/
+  unit.json        # Cleaned (unit suite running)
+  unit.log         # Cleaned
+  integration.json # Preserved (not running)
+  integration.log  # Preserved
+  failures/
+    unit/          # Cleaned
+    integration/   # Preserved
+```
+
+This allows incremental test runs without losing results from previous suite executions.
 
 ## Error Handling
 

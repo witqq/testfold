@@ -2,7 +2,10 @@
  * Parser Types
  */
 
-import type { FailureDetail } from '../config/types.js';
+import type { FailureDetail, TestResult } from '../config/types.js';
+
+// Re-export TestResult for backward compatibility
+export type { TestResult };
 
 export interface ParseResult {
   passed: number;
@@ -13,14 +16,6 @@ export interface ParseResult {
   failures: FailureDetail[];
   /** Raw test results for timing analysis */
   testResults?: TestResult[];
-}
-
-export interface TestResult {
-  name: string;
-  file: string;
-  status: 'passed' | 'failed' | 'skipped';
-  duration: number;
-  error?: string;
 }
 
 export interface Parser {

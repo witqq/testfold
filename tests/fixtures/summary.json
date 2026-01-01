@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-01-01T06:55:39.971Z",
+  "success": true,
+  "passRate": 100,
+  "totals": {
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "duration": 10
+  },
+  "suites": [
+    {
+      "name": "test-suite",
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "duration": 10,
+      "success": true,
+      "resultFile": "/Users/mike/WebstormProjects/claude-test-runner/tests/fixtures/temp-runner/jest-result.json",
+      "logFile": "/Users/mike/WebstormProjects/claude-test-runner/tests/fixtures/temp-runner/jest-result.log"
+    }
+  ]
+}

@@ -6,15 +6,22 @@ import { join } from 'node:path';
 import type { ValidatedConfig } from '../config/schema.js';
 import type { Suite, SuiteResult, AggregatedResults } from '../config/types.js';
 import type { Reporter } from '../reporters/types.js';
+import type { ParseResult } from '../parsers/types.js';
 import { JestParser } from '../parsers/jest.js';
 import { PlaywrightParser } from '../parsers/playwright.js';
+import { CustomParserLoader } from '../parsers/custom.js';
 import { executeCommand } from './executor.js';
+import { readEnvFileContent } from '../config/env-loader.js';
 
 export interface OrchestratorOptions {
   config: ValidatedConfig;
   reporters: Reporter[];
   environment?: string;
   cwd: string;
+  /** Pass-through arguments appended to test commands */
+  passThrough?: string[];
+  /** Environment variables loaded from .env file */
+  envFileVars?: Record<string, string>;
 }
 
 export class Orchestrator {
@@ -22,12 +29,16 @@ export class Orchestrator {
   private reporters: Reporter[];
   private environment?: string;
   private cwd: string;
+  private passThrough: string[];
+  private envFileVars: Record<string, string>;
 
   constructor(options: OrchestratorOptions) {
     this.config = options.config;
     this.reporters = options.reporters;
     this.environment = options.environment;
     this.cwd = options.cwd;
+    this.passThrough = options.passThrough ?? [];
+    this.envFileVars = options.envFileVars ?? {};
   }
 
   async run(suiteNames?: string[]): Promise<AggregatedResults> {
@@ -111,14 +122,28 @@ export class Orchestrator {
         ? suite.environments[this.environment]
         : undefined;
 
-    // Build env variables
+    // Build env variables: suite.env < envFileVars < envConfig.env
     const env: Record<string, string> = {
       ...suite.env,
+      ...this.envFileVars,
       ...(envConfig && typeof envConfig === 'object' ? envConfig.env : {}),
     };
 
-    if (envConfig && typeof envConfig === 'object' && envConfig.baseUrl) {
-      env['TEST_BASE_URL'] = envConfig.baseUrl;
+    // Determine baseUrl - static or extracted from env file
+    if (envConfig && typeof envConfig === 'object') {
+      if (envConfig.urlExtractor && envConfig.envFile) {
+        // Extract URL from env file using extractor function
+        const envContent = readEnvFileContent(envConfig.envFile, this.cwd);
+        if (envContent) {
+          const extractedUrl = envConfig.urlExtractor(envContent);
+          if (extractedUrl) {
+            env['TEST_BASE_URL'] = extractedUrl;
+          }
+        }
+      } else if (envConfig.baseUrl) {
+        // Use static baseUrl
+        env['TEST_BASE_URL'] = envConfig.baseUrl;
+      }
     }
 
     // Determine file paths
@@ -136,22 +161,50 @@ export class Orchestrator {
       env,
       timeout: suite.timeout,
       logFile,
+      passThrough: this.passThrough,
+      testsDir: this.config.testsDir,
     });
 
-    // Parse results
-    const parser = this.getParser(suite.type);
-    const parseResult = await parser.parse(resultFile, logFile);
+    // Parse results with graceful error recovery
+    // Attempt to parse even if executor returned non-zero exit code
+    let parseResult: ParseResult;
+    try {
+      const parser = this.getParser(suite);
+      parseResult = await parser.parse(resultFile, logFile);
+    } catch (parseError) {
+      // Graceful recovery: create error result instead of throwing
+      parseResult = {
+        passed: 0,
+        failed: 1,
+        skipped: 0,
+        duration: 0,
+        success: false,
+        failures: [
+          {
+            testName: 'Result Parse Error',
+            filePath: resultFile,
+            error:
+              parseError instanceof Error
+                ? parseError.message
+                : String(parseError),
+          },
+        ],
+      };
+    }
 
+    // Success is determined by test results, not executor exit code
+    // This allows partial results from failed runs to be reported
     const result: SuiteResult = {
       name: suite.name,
       passed: parseResult.passed,
       failed: parseResult.failed,
       skipped: parseResult.skipped,
       duration: parseResult.duration || execResult.duration,
-      success: parseResult.success && execResult.exitCode === 0,
+      success: parseResult.failed === 0 && parseResult.success !== false,
       failures: parseResult.failures,
       logFile,
       resultFile,
+      testResults: parseResult.testResults,
     };
 
     // Notify reporters
@@ -167,17 +220,21 @@ export class Orchestrator {
     return result;
   }
 
-  private getParser(type: Suite['type']) {
-    switch (type) {
+  private getParser(suite: Suite) {
+    switch (suite.type) {
       case 'jest':
         return new JestParser();
       case 'playwright':
         return new PlaywrightParser();
       case 'custom':
-        // TODO: Support custom parsers
-        throw new Error('Custom parsers not yet implemented');
+        if (!suite.parser) {
+          throw new Error(
+            `Suite "${suite.name}" has type "custom" but no parser path specified`,
+          );
+        }
+        return new CustomParserLoader(suite.parser, this.cwd);
       default:
-        throw new Error(`Unknown parser type: ${type}`);
+        throw new Error(`Unknown parser type: ${suite.type}`);
     }
   }
 

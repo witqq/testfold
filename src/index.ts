@@ -15,6 +15,16 @@ export type {
   AggregatedResults,
   FailureDetail,
   HooksConfig,
+  UrlExtractor,
+} from './config/index.js';
+
+// Environment loading
+export {
+  loadEnvFile,
+  loadEnvFileFromPath,
+  readEnvFileContent,
+  extractUrl,
+  type EnvLoadResult,
 } from './config/index.js';
 
 // Core
@@ -23,10 +33,19 @@ export { TestRunner } from './core/runner.js';
 // Parsers
 export { JestParser } from './parsers/jest.js';
 export { PlaywrightParser } from './parsers/playwright.js';
+export { loadCustomParser, CustomParserLoader } from './parsers/custom.js';
 export type { Parser, ParseResult } from './parsers/types.js';
 
 // Reporters
 export { ConsoleReporter } from './reporters/console.js';
 export { JsonReporter } from './reporters/json.js';
 export { MarkdownReporter } from './reporters/markdown.js';
+export { TextReporter } from './reporters/text.js';
 export type { Reporter } from './reporters/types.js';
+
+// Utils
+export {
+  resolvePathPrefix,
+  resolvePathPrefixes,
+  type PathResolverOptions,
+} from './utils/path-resolver.js';

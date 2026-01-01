@@ -9,7 +9,7 @@ const config: Config = {
   artifactsDir: './test-results',
   parallel: false,
   failFast: false,
-  reporters: ['console', 'json', 'markdown-failures'],
+  reporters: ['console', 'json', 'markdown-failures', 'timing'],
   suites: [
     {
       name: 'Unit',
