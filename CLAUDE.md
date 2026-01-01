@@ -50,6 +50,27 @@ npm run dev
 | `npm run lint` | Run ESLint |
 | `npm run format` | Run Prettier |
 
+## CLI Usage
+
+```bash
+# Basic usage
+testfold                              # Run all suites
+testfold unit integration             # Run specific suites
+
+# Options
+testfold -c custom.config.ts          # Custom config
+testfold -e staging                   # Environment
+testfold -r json                      # Override reporter
+
+# Pass-through to test framework
+testfold -- --testNamePattern="auth"  # Args after -- passed to test command
+testfold -- --verbose --coverage      # Multiple pass-through args
+
+# Path prefix resolution (automatic)
+testfold unit -- user                 # "user" resolved to tests/unit/user.test.ts
+testfold unit -- auth                 # If unique match, resolved to full path
+```
+
 ## Testing
 
 ### Run tests ONLY via npm scripts:
@@ -85,9 +106,9 @@ src/
 ├── index.ts              # Public exports
 ├── config/               # Config loading & validation
 ├── core/                 # Runner, orchestrator, executor
-├── parsers/              # Jest, Playwright parsers
-├── reporters/            # Console, JSON, Markdown reporters
-├── utils/                # ANSI strip, file ops, sanitization
+├── parsers/              # Jest, Playwright, Custom parsers
+├── reporters/            # Console, JSON, Markdown, Timing, Text reporters
+├── utils/                # ANSI strip, file ops, sanitization, path resolver
 └── cli/                  # CLI entry point
 ```
 
@@ -96,12 +117,13 @@ src/
 ### Config Schema (Zod)
 
 ```typescript
-const SuiteSchema = z.object({
-  name: z.string(),
-  type: z.enum(['jest', 'playwright', 'custom']),
-  command: z.string(),
-  resultFile: z.string(),
-  timeout: z.number().optional(),
+const ConfigSchema = z.object({
+  artifactsDir: z.string(),
+  testsDir: z.string().optional().default('./tests'),  // For path prefix resolution
+  suites: z.array(SuiteSchema),
+  parallel: z.boolean().optional().default(true),
+  failFast: z.boolean().optional().default(false),
+  reporters: z.array(z.string()).optional(),
 });
 ```
 
@@ -121,6 +143,29 @@ interface ParseResult {
 }
 ```
 
+### Custom Parser
+
+```typescript
+// Suite config with custom parser
+{
+  name: 'my-suite',
+  type: 'custom',
+  command: 'my-test-runner',
+  resultFile: 'results.json',
+  parser: './parsers/my-parser.ts'  // Path to custom parser
+}
+
+// Custom parser module (supports default class, default object, or named 'parser' export)
+import type { Parser, ParseResult } from 'testfold';
+
+export default class MyParser implements Parser {
+  async parse(jsonPath: string, logPath?: string): Promise<ParseResult> {
+    // Parse logic
+    return { passed: 0, failed: 0, skipped: 0, duration: 0, success: true, failures: [] };
+  }
+}
+```
+
 ### Reporter Interface
 
 ```typescript
@@ -131,8 +176,30 @@ interface Reporter {
 }
 ```
 
-## Requirements
+### Available Reporters
 
-Полные требования: `/Users/mike/WebstormProjects/claude-test-runner/REQUIREMENTS.md`
+| Reporter | Output |
+|----------|--------|
+| `console` | Terminal output with colors and test hierarchy |
+| `json` | `summary.json` with structured data |
+| `markdown-failures` | Per-test failure reports in `failures/` |
+| `timing` | `timing.json` with slowest tests sorted by duration |
+| `text` | Plain text output for CI (no ANSI, no markdown) |
 
-**Note:** Локальная папка проекта временно называется `claude-test-runner`, но пакет и репозиторий переименованы в `testfold`.
+## v0.2.0 Features
+
+### Graceful Error Recovery
+Orchestrator attempts to parse test results even when executor returns non-zero exit code. Partial results extracted from failed runs.
+
+### Environment Routing
+Load environment-specific `.env` files via CLI flag `-e`. Supports static baseUrl or dynamic URL extraction via `urlExtractor` function.
+
+### Per-Suite Artifact Cleanup
+Running a single suite only cleans that suite's artifacts. Previous runs of other suites are preserved.
+
+### Path Prefix Resolution
+Pass-through arguments that look like file prefixes are resolved to full paths. Single-match prefixes resolved automatically, multi-match kept unchanged.
+
+## Notes
+
+Локальная папка проекта временно называется `claude-test-runner`, но пакет и репозиторий переименованы в `testfold`.

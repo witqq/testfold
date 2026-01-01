@@ -58,9 +58,12 @@ export class MarkdownReporter implements Reporter {
     const lines: string[] = [
       '# Test Failure Report',
       '',
-      `**Test:** ${failure.testName}`,
-      `**File:** ${failure.filePath}`,
     ];
+
+    // Format test hierarchy
+    const hierarchy = this.formatHierarchy(failure.testName);
+    lines.push(...hierarchy);
+    lines.push('', `**File:** ${failure.filePath}`);
 
     if (failure.duration !== undefined) {
       lines.push(`**Duration:** ${failure.duration}ms`);
@@ -96,5 +99,30 @@ export class MarkdownReporter implements Reporter {
     }
 
     return lines.join('\n');
+  }
+
+  /**
+   * Format test hierarchy for markdown display
+   * "describe1 > describe2 > test" -> structured list
+   */
+  private formatHierarchy(testName: string): string[] {
+    const parts = testName.split(' > ');
+    if (parts.length <= 1) {
+      return [`**Test:** ${testName}`];
+    }
+
+    const lines: string[] = ['## Test Hierarchy', ''];
+    for (let i = 0; i < parts.length; i++) {
+      const indent = '  '.repeat(i);
+      const part = parts[i];
+      if (i === parts.length - 1) {
+        // Last item is the actual test
+        lines.push(`${indent}- **${part}**`);
+      } else {
+        // Parent describe blocks
+        lines.push(`${indent}- ${part}`);
+      }
+    }
+    return lines;
   }
 }

@@ -8,12 +8,21 @@ export default tseslint.config(
     ignores: ['dist/', 'node_modules/', 'test-results/', 'claude-temp-files/'],
   },
   {
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
+    },
     rules: {
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_' },
       ],
       '@typescript-eslint/no-explicit-any': 'warn',
+      'no-control-regex': 'off',
     },
   }
 );

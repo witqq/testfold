@@ -2,10 +2,21 @@
  * Configuration Types
  */
 
+/**
+ * URL extraction function type
+ * Receives env file content and returns extracted URL
+ */
+export type UrlExtractor = (envContent: string) => string | undefined;
+
 export interface SuiteEnvironment {
-  baseUrl: string;
+  /** Base URL for tests (can be static or extracted) */
+  baseUrl?: string;
+  /** Path to .env file to load */
   envFile?: string;
+  /** Additional environment variables */
   env?: Record<string, string>;
+  /** Function to extract URL from env file content */
+  urlExtractor?: UrlExtractor;
 }
 
 export interface Suite {
@@ -78,6 +89,15 @@ export interface FailureDetail {
   duration?: number;
 }
 
+/** Individual test result for timing analysis */
+export interface TestResult {
+  name: string;
+  file: string;
+  status: 'passed' | 'failed' | 'skipped';
+  duration: number;
+  error?: string;
+}
+
 export interface SuiteResult {
   name: string;
   passed: number;
@@ -88,6 +108,8 @@ export interface SuiteResult {
   failures: FailureDetail[];
   logFile: string;
   resultFile: string;
+  /** Individual test results for timing analysis */
+  testResults?: TestResult[];
 }
 
 export interface AggregatedResults {

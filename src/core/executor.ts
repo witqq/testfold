@@ -6,12 +6,17 @@ import { spawn } from 'node:child_process';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import type { Suite } from '../config/types.js';
+import { resolvePathPrefix } from '../utils/path-resolver.js';
 
 export interface ExecuteOptions {
   cwd: string;
   env?: Record<string, string>;
   timeout?: number;
   logFile: string;
+  /** Pass-through arguments appended to command */
+  passThrough?: string[];
+  /** Base directory for resolving path prefixes (defaults to cwd) */
+  testsDir?: string;
 }
 
 export interface ExecuteResult {
@@ -23,6 +28,42 @@ export interface ExecuteResult {
 
 const MAX_BUFFER = 50 * 1024 * 1024; // 50MB
 
+/**
+ * Resolve path prefixes in pass-through arguments
+ * Arguments that look like test file prefixes are resolved to full paths
+ */
+function resolvePassThroughPaths(
+  args: string[],
+  testsDir: string,
+): string[] {
+  return args.map((arg) => {
+    // Skip flags (starts with -)
+    if (arg.startsWith('-')) {
+      return arg;
+    }
+
+    // Skip if already looks like a full path (contains / or \)
+    if (arg.includes('/') || arg.includes('\\')) {
+      return arg;
+    }
+
+    // Skip if it's clearly not a file prefix (no letters, just numbers, etc.)
+    if (!/[a-zA-Z]/.test(arg)) {
+      return arg;
+    }
+
+    // Try to resolve as a path prefix
+    const matches = resolvePathPrefix(arg, { baseDir: testsDir });
+
+    // If exactly one match, use it; otherwise keep original
+    if (matches.length === 1 && matches[0]) {
+      return matches[0];
+    }
+
+    return arg;
+  });
+}
+
 export async function executeCommand(
   suite: Suite,
   options: ExecuteOptions,
@@ -30,7 +71,17 @@ export async function executeCommand(
   const startTime = Date.now();
 
   return new Promise((resolve) => {
-    const [cmd, ...args] = suite.command.split(' ');
+    // Build command with pass-through arguments
+    const commandParts = suite.command.split(' ');
+    const passThrough = options.passThrough ?? [];
+
+    // Resolve path prefixes in pass-through arguments
+    const testsDir = options.testsDir ?? options.cwd;
+    const resolvedPassThrough = resolvePassThroughPaths(passThrough, testsDir);
+
+    const fullCommand = [...commandParts, ...resolvedPassThrough];
+
+    const [cmd, ...args] = fullCommand;
     if (!cmd) {
       resolve({
         exitCode: 1,
@@ -89,8 +140,9 @@ export async function executeCommand(
 
       // Write log file
       await mkdir(dirname(options.logFile), { recursive: true });
+      const actualCommand = fullCommand.join(' ');
       const logContent = [
-        `Command: ${suite.command}`,
+        `Command: ${actualCommand}`,
         `Exit Code: ${code}`,
         `Duration: ${duration}ms`,
         killed ? 'Status: KILLED (timeout)' : '',
