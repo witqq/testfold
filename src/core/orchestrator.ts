@@ -57,7 +57,7 @@ export class Orchestrator {
 
   async run(suiteNames?: string[]): Promise<AggregatedResults> {
     // Filter suites if specific ones requested
-    const suitesToRun = suiteNames
+    const suitesToRun = suiteNames && suiteNames.length > 0
       ? this.config.suites.filter(
           (s) =>
             suiteNames.includes(s.name) ||
@@ -67,7 +67,7 @@ export class Orchestrator {
 
     if (suitesToRun.length === 0) {
       throw new Error(
-        suiteNames
+        suiteNames && suiteNames.length > 0
           ? `No matching suites found: ${suiteNames.join(', ')}`
           : 'No suites configured',
       );

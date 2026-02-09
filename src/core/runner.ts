@@ -87,7 +87,7 @@ export class TestRunner {
     }
 
     // Determine which suites will run
-    const suitesToRun = suiteNames
+    const suitesToRun = suiteNames && suiteNames.length > 0
       ? this.config.suites.filter(
           (s) =>
             suiteNames.includes(s.name) ||
