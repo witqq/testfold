@@ -1,23 +1,2079 @@
 {
-  "timestamp": "2026-01-01T06:55:42.103Z",
+  "timestamp": "2026-02-09T00:21:23.756Z",
   "success": true,
   "passRate": 100,
   "totals": {
-    "passed": 155,
+    "passed": 342,
     "failed": 0,
     "skipped": 0,
-    "duration": 6161
+    "duration": 7771
   },
+  "failedTests": [],
+  "errors": [],
   "suites": [
     {
       "name": "Unit",
-      "passed": 155,
+      "passed": 342,
       "failed": 0,
       "skipped": 0,
-      "duration": 6161,
+      "duration": 7771,
       "success": true,
       "resultFile": "test-results/unit.json",
-      "logFile": "test-results/unit.log"
+      "logFile": "test-results/unit.log",
+      "testResults": [
+        {
+          "name": "Progress formatter > Jest pattern detection > should count Jest pass markers",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "Progress formatter > Jest pattern detection > should count Jest fail markers",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Progress formatter > Jest pattern detection > should count mixed pass and fail",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > Jest pattern detection > should handle ANSI codes in output",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > Playwright pattern detection > should count Playwright pass markers",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > Playwright pattern detection > should parse summary line with counts",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Progress formatter > Playwright pattern detection > should parse failed count from summary",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > Progress emission > should emit progress to stderr every 10 tests",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > Progress emission > should not emit progress before 10 tests",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > Progress emission > should show warning indicator when failures present",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > Progress emission > should emit multiple progress reports",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > State tracking > should return suite name in state",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > State tracking > should return a copy of state",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > State tracking > should handle chunked output across buffer boundaries",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Progress formatter > Unknown framework > should not count anything for unknown framework type",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/progress.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefix > resolves exact prefix match",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefix > resolves hyphenated prefix",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefix > is case-insensitive",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefix > returns empty array for no matches",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefix > matches .spec.ts files",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefix > searches recursively in subdirectories",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefix > supports custom extensions",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefix > handles non-existent directory gracefully",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefixes > resolves multiple prefixes",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefixes > returns unique paths (no duplicates)",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Path Prefix Resolver > resolvePathPrefixes > handles empty prefix array",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/path-resolver.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "stripAnsi > should remove color codes",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/ansi.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "stripAnsi > should remove bold/dim codes",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/ansi.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "stripAnsi > should handle multiple codes",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/ansi.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "stripAnsi > should handle empty string",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/ansi.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "stripAnsi > should return unchanged text without ANSI codes",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/ansi.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "stripAnsi > should handle multiline text",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/ansi.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "hasAnsi > should detect ANSI codes",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/ansi.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "hasAnsi > should return false for plain text",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/ansi.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "hasAnsi > should return false for empty string",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/ansi.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "TimingReporter > writes timing.json with tests sorted by duration descending",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing.test.ts",
+          "status": "passed",
+          "duration": 11
+        },
+        {
+          "name": "TimingReporter > includes suite name in each test entry",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "TimingReporter > combines tests from multiple suites sorted by duration",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "TimingReporter > handles suites without testResults gracefully",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "TimingReporter > includes timestamp and totalDuration in output",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing.test.ts",
+          "status": "passed",
+          "duration": 4
+        },
+        {
+          "name": "TimingReporter > includes test status in timing entries",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "TextReporter > generates plain text output without ANSI codes",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/text.test.ts",
+          "status": "passed",
+          "duration": 18
+        },
+        {
+          "name": "TextReporter > does not contain markdown formatting",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/text.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "TextReporter > includes failure details",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/text.test.ts",
+          "status": "passed",
+          "duration": 4
+        },
+        {
+          "name": "TextReporter > formats totals correctly",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/text.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "TextReporter > includes multiple suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/text.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "TextReporter > handles empty error gracefully",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/text.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "sanitizeFilename > should convert to lowercase",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/sanitize.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "sanitizeFilename > should replace spaces with hyphens",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/sanitize.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "sanitizeFilename > should remove special characters",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/sanitize.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "sanitizeFilename > should handle multiple spaces",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/sanitize.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "sanitizeFilename > should remove leading/trailing hyphens",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/sanitize.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "sanitizeFilename > should truncate to max length",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/sanitize.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "sanitizeFilename > should handle test name with describe blocks",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/sanitize.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "sanitizeFilename > should handle empty string",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/sanitize.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "sanitizeFilename > should handle only special characters",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/sanitize.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "cleanSuiteArtifacts > deletes only specified suite artifacts",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/files-cleanup.test.ts",
+          "status": "passed",
+          "duration": 9
+        },
+        {
+          "name": "cleanSuiteArtifacts > deletes failures directory for specified suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/files-cleanup.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "cleanSuiteArtifacts > handles non-existent files gracefully",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/files-cleanup.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "cleanSuiteArtifacts > creates artifacts directory if not exists",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/files-cleanup.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "cleanSuiteArtifacts > sanitizes suite name for failures directory (spaces to hyphens)",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/files-cleanup.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "cleanSuiteArtifacts > preserves underscores in suite name (matching markdown.ts behavior)",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/files-cleanup.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "cleanSuiteArtifacts > cleans multiple suites at once",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/utils/files-cleanup.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "TimingTextReporter > should create timing txt file per suite",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing-text.test.ts",
+          "status": "passed",
+          "duration": 39
+        },
+        {
+          "name": "TimingTextReporter > should include suite name and total duration",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing-text.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "TimingTextReporter > should list slowest tests sorted by duration",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing-text.test.ts",
+          "status": "passed",
+          "duration": 8
+        },
+        {
+          "name": "TimingTextReporter > should show file-level grouping",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing-text.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "TimingTextReporter > should show setup/teardown overhead",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing-text.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "TimingTextReporter > should handle suites with no test results",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing-text.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "TimingTextReporter > should create files for multiple suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing-text.test.ts",
+          "status": "passed",
+          "duration": 12
+        },
+        {
+          "name": "TimingTextReporter > should format duration correctly",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing-text.test.ts",
+          "status": "passed",
+          "duration": 9
+        },
+        {
+          "name": "TimingTextReporter > should sanitize suite names for filenames",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/timing-text.test.ts",
+          "status": "passed",
+          "duration": 9
+        },
+        {
+          "name": "ConsoleReporter coverage detection > should print coverage hint when coverage directory exists",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-coverage.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "ConsoleReporter coverage detection > should not print coverage hint when coverage directory does not exist",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-coverage.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter coverage detection > should print coverage hint on both success and failure runs",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-coverage.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter coverage detection > should print coverage hint before artifacts section",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-coverage.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter coverage detection > should print coverage hint before JSON summary line",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-coverage.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "JsonReporter enriched output > should include failedTests array with test names",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/json-enriched.test.ts",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "name": "JsonReporter enriched output > should include errors array with error messages",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/json-enriched.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "JsonReporter enriched output > should have empty failedTests and errors when all pass",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/json-enriched.test.ts",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "name": "JsonReporter enriched output > should aggregate failures across multiple suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/json-enriched.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "JsonReporter enriched output > should include per-suite testResults when available",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/json-enriched.test.ts",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "name": "JsonReporter enriched output > should omit testResults when not available",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/json-enriched.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "JsonReporter enriched output > should still include standard fields",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/json-enriched.test.ts",
+          "status": "passed",
+          "duration": 13
+        },
+        {
+          "name": "SummaryLogReporter > should create test-summary.log file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/summary-log.test.ts",
+          "status": "passed",
+          "duration": 13
+        },
+        {
+          "name": "SummaryLogReporter > should contain no ANSI codes",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/summary-log.test.ts",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "name": "SummaryLogReporter > should contain summary table with suite names",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/summary-log.test.ts",
+          "status": "passed",
+          "duration": 4
+        },
+        {
+          "name": "SummaryLogReporter > should contain pass/fail/skip counts and duration",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/summary-log.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "SummaryLogReporter > should contain totals row",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/summary-log.test.ts",
+          "status": "passed",
+          "duration": 9
+        },
+        {
+          "name": "SummaryLogReporter > should show ALL TESTS PASSED when success",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/summary-log.test.ts",
+          "status": "passed",
+          "duration": 8
+        },
+        {
+          "name": "SummaryLogReporter > should show TESTS FAILED when not success",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/summary-log.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "SummaryLogReporter > should contain pass rate",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/summary-log.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "SummaryLogReporter > should contain table header row",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/summary-log.test.ts",
+          "status": "passed",
+          "duration": 15
+        },
+        {
+          "name": "isReporterPath > should detect relative paths with ./",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "isReporterPath > should detect relative paths with ../",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "isReporterPath > should detect absolute paths",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "isReporterPath > should detect .ts files",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "isReporterPath > should detect .js files",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "isReporterPath > should detect .mjs files",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "isReporterPath > should not detect built-in names",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "loadCustomReporter > valid reporters > should load reporter exported as default class",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "loadCustomReporter > valid reporters > should load reporter exported as default object",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "loadCustomReporter > valid reporters > should load reporter from named export",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "loadCustomReporter > valid reporters > should resolve relative paths from cwd",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "loadCustomReporter > valid reporters > should invoke loaded reporter lifecycle methods",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "loadCustomReporter > invalid reporters > should throw for non-existent file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "name": "loadCustomReporter > invalid reporters > should throw for reporter without required methods",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "parseArgs multi-reporter > should parse single reporter flag",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "parseArgs multi-reporter > should parse comma-separated reporters",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs multi-reporter > should parse repeated reporter flags",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs multi-reporter > should return empty array when no reporter specified",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs multi-reporter > should handle mixed comma and repeated flags",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs multi-reporter > should trim whitespace around commas",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs multi-reporter > should handle custom reporter path in multi-reporter",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/custom-reporter.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter consolidated failures > should show FAILURES section when tests fail",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter consolidated failures > should NOT show FAILURES section when all pass",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter consolidated failures > should show failures from multiple suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter consolidated failures > should include suite name in each failure entry",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter consolidated failures > should truncate long error messages to 120 chars",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter consolidated failures > should handle failures with empty error",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter consolidated failures > should handle failures with multiline error (show first line only)",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter re-run instructions > should show RE-RUN INSTRUCTIONS section",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter re-run instructions > should include testfold command with failed suite name",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter re-run instructions > should include per-file re-run commands",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter re-run instructions > should deduplicate files in re-run commands",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter re-run instructions > should list multiple failed suites in re-run command",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter re-run instructions > should not show per-file commands when more than 5 unique files",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter re-run instructions > should handle failures with empty filePath",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-failures.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter artifact inventory > shows ARTIFACTS section when artifacts exist",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-artifacts.test.ts",
+          "status": "passed",
+          "duration": 4
+        },
+        {
+          "name": "ConsoleReporter artifact inventory > shows timing.json when it exists",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-artifacts.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "ConsoleReporter artifact inventory > shows summary.json from parent directory",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-artifacts.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "ConsoleReporter artifact inventory > shows failure markdown files",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-artifacts.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "ConsoleReporter artifact inventory > sanitizes suite name in failures path (spaces to hyphens)",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-artifacts.test.ts",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "name": "ConsoleReporter artifact inventory > does not show ARTIFACTS section when no artifacts exist",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-artifacts.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter artifact inventory > does not show artifacts when artifactsDir not provided",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-artifacts.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter agent instructions > should show AGENT INSTRUCTIONS block when tests fail",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "ConsoleReporter agent instructions > should NOT show AGENT INSTRUCTIONS when all pass",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter agent instructions > should show top error patterns",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter agent instructions > should list affected suites from multiple failures",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter agent instructions > should show infra error action when exitCode is 2",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter agent instructions > should show timeout action when exitCode is 3",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter agent instructions > should include suggested actions",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter JSON summary line > should print JSON summary as last line on success",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter JSON summary line > should print JSON summary as last line on failure",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter JSON summary line > should always be the very last line of output",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter JSON summary line > should contain all required fields",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "ConsoleReporter JSON summary line > should be parseable JSON after the prefix",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ConsoleReporter JSON summary line > should include skipped count",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/console-agent.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Test Hierarchy Formatting > ConsoleReporter > formats hierarchical test name with › separator",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/hierarchy.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Test Hierarchy Formatting > ConsoleReporter > shows up to 3 failures with hierarchy",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/hierarchy.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Test Hierarchy Formatting > ConsoleReporter > handles single-level test name without separator",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/hierarchy.test.ts",
+          "status": "passed",
+          "duration": 4
+        },
+        {
+          "name": "Test Hierarchy Formatting > MarkdownReporter > formats hierarchical test name as indented list",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/hierarchy.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "Test Hierarchy Formatting > MarkdownReporter > handles single-level test name without hierarchy section",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/hierarchy.test.ts",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "name": "Test Hierarchy Formatting > MarkdownReporter > formats deep hierarchy correctly",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/reporters/hierarchy.test.ts",
+          "status": "passed",
+          "duration": 9
+        },
+        {
+          "name": "loadCustomParser > valid parsers > should load parser exported as default class",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/custom.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "loadCustomParser > valid parsers > should load parser exported as default object",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/custom.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "loadCustomParser > valid parsers > should load parser from named export",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/custom.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "loadCustomParser > valid parsers > should resolve relative paths from cwd",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/custom.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "loadCustomParser > invalid parsers > should throw for non-existent file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/custom.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "loadCustomParser > invalid parsers > should throw for parser without parse method",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/custom.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "CustomParserLoader > should lazily load parser on first parse call",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/custom.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "CustomParserLoader > should throw descriptive error for invalid parser path",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/custom.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "JestParser > parse success results > should correctly count passed, failed, skipped tests",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "JestParser > parse success results > should extract test duration",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 4
+        },
+        {
+          "name": "JestParser > parse success results > should have no failures",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "JestParser > parse success results > should extract individual test results",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "JestParser > parse failure results > should correctly count passed and failed tests",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "JestParser > parse failure results > should extract failure details",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "JestParser > parse failure results > should preserve ANSI codes in error messages",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "JestParser > handle missing file > should return empty success result for missing file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "JestParser > handle crashed test suite > should count crashed suite as failed",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "JestParser > handle crashed test suite > should extract crash error message",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "JestParser > handle crashed test suite > should include crashed suite file path",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "JestParser > handle crashed test suite > should still parse passing tests from other suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/jest.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Orchestrator environment handling > env variable merging > merges envFileVars with suite env",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-env.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Orchestrator environment handling > env variable merging > envFileVars override suite env",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-env.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Orchestrator environment handling > env variable merging > environment config env overrides envFileVars",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-env.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Orchestrator environment handling > urlExtractor > accepts urlExtractor in environment config",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-env.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Orchestrator environment handling > urlExtractor > extracts URL from env file using urlExtractor",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-env.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildWorkersArg > should return --maxWorkers for jest suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/workers.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "buildWorkersArg > should return --workers for playwright suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/workers.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildWorkersArg > should return null for custom suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/workers.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "buildWorkersArg > should handle workers=1",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/workers.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "PlaywrightParser > parse success results > should correctly count passed tests",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "PlaywrightParser > parse success results > should extract duration from stats",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "PlaywrightParser > parse success results > should have no failures",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "PlaywrightParser > parse success results > should handle nested suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "PlaywrightParser > parse failure results > should correctly count passed, failed, skipped",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "PlaywrightParser > parse failure results > should extract failure details with error and stack",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "PlaywrightParser > parse failure results > should extract stdout and stderr",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "PlaywrightParser > parse failure results > should extract attachments",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "PlaywrightParser > parse failure results > should take last result after retries",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "PlaywrightParser > parse failure results > should handle timedOut status as failed",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 9
+        },
+        {
+          "name": "PlaywrightParser > handle missing file > should return empty success result for missing file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Executor Path Resolution > path prefix resolution logic > resolves unique prefix to full path",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-path-resolution.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Executor Path Resolution > path prefix resolution logic > resolves prefix with multiple matches",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-path-resolution.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Executor Path Resolution > path prefix resolution logic > resolves spec files",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-path-resolution.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Executor Path Resolution > path prefix resolution logic > returns empty for non-matching prefix",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-path-resolution.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Executor Path Resolution > executor behavior expectations > should resolve single-match prefixes to full paths",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-path-resolution.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Executor Path Resolution > executor behavior expectations > should keep multi-match prefixes unchanged",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-path-resolution.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Executor Path Resolution > executor behavior expectations > should skip flags",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-path-resolution.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Executor Path Resolution > executor behavior expectations > should skip paths with slashes",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-path-resolution.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect Error: in log when JSON is missing",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect ReferenceError",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 25
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect SyntaxError",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 11
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect TypeError",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect ECONNREFUSED",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 3
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect Timed out",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 11
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect globalSetup failure",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 8
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect \"Cannot find module\"",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "PlaywrightParser crash detection > should return success when no log and no JSON",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "PlaywrightParser crash detection > should return success when log has no error patterns",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "PlaywrightParser crash detection > should extract error snippet with context lines",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect \"failed to run\"",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect crash when JSON file exists but is empty",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "PlaywrightParser crash detection > should detect crash when JSON file is truncated/corrupted",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "PlaywrightParser crash detection > should return parse error when JSON is corrupted and no error in log",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/parsers/playwright-crash.test.ts",
+          "status": "passed",
+          "duration": 2
+        },
+        {
+          "name": "TestRunner > reporter override > should use reporter from options when provided",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/runner.test.ts",
+          "status": "passed",
+          "duration": 18
+        },
+        {
+          "name": "TestRunner > passThrough arguments > should pass arguments through to test command",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/runner.test.ts",
+          "status": "passed",
+          "duration": 42
+        },
+        {
+          "name": "GuardResult interface > represents success with ok: true",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "GuardResult interface > represents failure with ok: false and error message",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "GuardResult interface > allows failure without error message",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "HooksConfig guard-aware hooks > beforeSuite can return void (backward compat)",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "HooksConfig guard-aware hooks > beforeSuite can return GuardResult success",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "HooksConfig guard-aware hooks > beforeSuite can return GuardResult failure",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "HooksConfig guard-aware hooks > afterSuite can return void (backward compat)",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "HooksConfig guard-aware hooks > afterSuite can return GuardResult failure",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "HooksSchema accepts guard-aware hooks > validates config with guard-returning beforeSuite",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "HooksSchema accepts guard-aware hooks > validates config with guard-returning afterSuite",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "HooksSchema accepts guard-aware hooks > validates config with void-returning hooks (backward compat)",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Config.testsDir field > accepts testsDir in config",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Config.testsDir field > testsDir is optional",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Config.testsDir field > Zod schema defaults testsDir to ./tests",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Config.testsDir field > Zod schema accepts custom testsDir",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/guard-hooks.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "executeCommand > pass-through arguments > should append pass-through arguments to command",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor.test.ts",
+          "status": "passed",
+          "duration": 10
+        },
+        {
+          "name": "executeCommand > pass-through arguments > should work without pass-through arguments",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor.test.ts",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "name": "executeCommand > pass-through arguments > should log full command with pass-through in log file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor.test.ts",
+          "status": "passed",
+          "duration": 13
+        },
+        {
+          "name": "executeCommand > pass-through arguments > should handle empty pass-through array",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor.test.ts",
+          "status": "passed",
+          "duration": 8
+        },
+        {
+          "name": "Orchestrator > graceful error recovery > should handle corrupted JSON result file gracefully",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator.test.ts",
+          "status": "passed",
+          "duration": 22
+        },
+        {
+          "name": "Orchestrator > graceful error recovery > should report partial results from failed test runs",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator.test.ts",
+          "status": "passed",
+          "duration": 12
+        },
+        {
+          "name": "Orchestrator > graceful error recovery > should handle empty result file gracefully",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator.test.ts",
+          "status": "passed",
+          "duration": 11
+        },
+        {
+          "name": "Orchestrator > graceful error recovery > should determine success from test results, not exit code",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator.test.ts",
+          "status": "passed",
+          "duration": 12
+        },
+        {
+          "name": "Orchestrator > custom parser > should use custom parser when type is \"custom\"",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator.test.ts",
+          "status": "passed",
+          "duration": 8
+        },
+        {
+          "name": "Orchestrator > custom parser > should throw error when custom type has no parser path",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "Orchestrator guard-aware hooks > beforeSuite returning void allows suite to run normally",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-guards.test.ts",
+          "status": "passed",
+          "duration": 15
+        },
+        {
+          "name": "Orchestrator guard-aware hooks > beforeSuite returning { ok: true } allows suite to run normally",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-guards.test.ts",
+          "status": "passed",
+          "duration": 13
+        },
+        {
+          "name": "Orchestrator guard-aware hooks > beforeSuite returning { ok: false } fails suite without running tests",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-guards.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Orchestrator guard-aware hooks > beforeSuite guard failure uses default error when none provided",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-guards.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Orchestrator guard-aware hooks > afterSuite returning void does not affect suite result",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-guards.test.ts",
+          "status": "passed",
+          "duration": 14
+        },
+        {
+          "name": "Orchestrator guard-aware hooks > afterSuite returning { ok: false } fails suite even when tests pass",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-guards.test.ts",
+          "status": "passed",
+          "duration": 11
+        },
+        {
+          "name": "Orchestrator guard-aware hooks > afterSuite returning { ok: true } does not affect suite result",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-guards.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "Orchestrator guard-aware hooks > both beforeSuite and afterSuite guards work together",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-guards.test.ts",
+          "status": "passed",
+          "duration": 7
+        },
+        {
+          "name": "Orchestrator guard-aware hooks > beforeSuite guard failure produces INFRA_ERROR exit code",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-guards.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Orchestrator guard-aware hooks > afterSuite guard failure produces INFRA_ERROR exit code",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/orchestrator-guards.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "env-loader > loadEnvFile > loads .env.{environment} file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "env-loader > loadEnvFile > loads .env.{environment}.local file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "env-loader > loadEnvFile > loads env/.env.{environment} file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "env-loader > loadEnvFile > returns empty when no file found",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "env-loader > loadEnvFile > prefers .env.{environment} over .env.{environment}.local",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "env-loader > loadEnvFileFromPath > loads env file from explicit path",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "env-loader > loadEnvFileFromPath > returns empty for non-existent file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "env-loader > readEnvFileContent > reads file content",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "env-loader > readEnvFileContent > returns empty string for missing file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "env-loader > extractUrl > extracts URL using extractor function",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "env-loader > extractUrl > returns undefined for missing file",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "env-loader > extractUrl > returns undefined when extractor returns undefined",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/config/env-loader.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs > basic arguments > should parse suite names",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "parseArgs > basic arguments > should parse config flag",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "parseArgs > basic arguments > should parse env flag",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs > basic arguments > should default parallel to true",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs > basic arguments > should handle --no-parallel",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs > reporter override > should parse --reporter flag",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs > reporter override > should parse -r alias",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "parseArgs > reporter override > should return empty array when not specified",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs > pass-through arguments > should capture arguments after -- separator",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs > pass-through arguments > should capture multiple pass-through arguments",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs > pass-through arguments > should return empty array when no separator",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "parseArgs > pass-through arguments > should handle separator at the end",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs > pass-through arguments > should not parse pass-through as CLI flags",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "parseArgs > combined arguments > should handle all argument types together",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/args.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "CLI filtering flags > parseArgs --grep > should parse --grep flag",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "CLI filtering flags > parseArgs --grep > should parse -g alias",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "CLI filtering flags > parseArgs --grep > should be undefined when not specified",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "CLI filtering flags > parseArgs --grep-invert > should parse --grep-invert flag",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "CLI filtering flags > parseArgs --grep-invert > should be undefined when not specified",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "CLI filtering flags > parseArgs --file > should parse --file flag",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "CLI filtering flags > parseArgs --file > should parse -f alias",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "CLI filtering flags > parseArgs --file > should be undefined when not specified",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "CLI filtering flags > parseArgs combined with other flags > should handle grep + suite names + env",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "CLI filtering flags > parseArgs combined with other flags > should handle all filter flags together",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "CLI filtering flags > parseArgs combined with other flags > should not conflict with pass-through args",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildFilterArgs > Jest suite type > should transform --grep to --testNamePattern",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildFilterArgs > Jest suite type > should pass --grep-invert as-is for Jest",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildFilterArgs > Jest suite type > should append file filter directly",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "buildFilterArgs > Jest suite type > should combine all filters",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildFilterArgs > Playwright suite type > should pass --grep as --grep for Playwright",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildFilterArgs > Playwright suite type > should pass --grep-invert as --grep-invert for Playwright",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildFilterArgs > Playwright suite type > should append file filter directly",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildFilterArgs > Custom suite type > should pass --grep as-is",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildFilterArgs > No filters > should return empty array when no filters specified",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "buildFilterArgs > No filters > should return empty array with undefined values",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/cli/filter-flags.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ExitCode enum > should have correct numeric values",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "--dry-run flag > should parse --dry-run flag",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "--dry-run flag > should default dryRun to false",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "--dry-run flag > should combine --dry-run with suite names",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "--dry-run flag > should combine --dry-run with filter flags",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Exit code computation in AggregatedResults > should return PASS (0) when all suites pass",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Exit code computation in AggregatedResults > should return TEST_FAILURE (1) when tests fail",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Exit code computation in AggregatedResults > should return INFRA_ERROR (2) for parse/spawn failures",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Exit code computation in AggregatedResults > should return TIMEOUT (3) for timed-out suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "Exit code computation in AggregatedResults > should prioritize timeout over infra_error",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Exit code computation in AggregatedResults > should prioritize infra_error over test_failure",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Exit code computation in AggregatedResults > should handle mixed error categories with correct priority",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "Exit code computation in AggregatedResults > should include exitCode in AggregatedResults type",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ErrorCategory on SuiteResult > should default to none for passing suites",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "ErrorCategory on SuiteResult > should accept all valid error categories",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "--dry-run CLI output > should print suite commands without executing",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 94
+        },
+        {
+          "name": "--dry-run CLI output > should exit with code 0",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 88
+        },
+        {
+          "name": "Exit code safety fallback > should return TEST_FAILURE for failed suite without errorCategory",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/exit-codes-dryrun.test.ts",
+          "status": "passed",
+          "duration": 1
+        },
+        {
+          "name": "executor enhancements > SIGKILL escalation > should send SIGTERM first on timeout",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 206
+        },
+        {
+          "name": "executor enhancements > SIGKILL escalation > should escalate to SIGKILL if process ignores SIGTERM",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 705
+        },
+        {
+          "name": "executor enhancements > SIGKILL escalation > should use default 5s grace period when not specified",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 203
+        },
+        {
+          "name": "executor enhancements > workers flag > should append --maxWorkers for jest suite with workers",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "executor enhancements > workers flag > should append --workers for playwright suite with workers",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "executor enhancements > workers flag > should not append workers flag for custom suite",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 6
+        },
+        {
+          "name": "executor enhancements > workers flag > should not append workers flag when not set",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "executor enhancements > progress streaming > should call onOutput with stdout chunks",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "executor enhancements > progress streaming > should call onOutput multiple times for multi-line output",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "executor enhancements > progress streaming > should work without onOutput callback",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "executor enhancements > progress streaming > should still capture stdout when onOutput is provided",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/core/executor-enhancements.test.ts",
+          "status": "passed",
+          "duration": 5
+        },
+        {
+          "name": "npm package integration > ESM imports > should import TestRunner",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 52
+        },
+        {
+          "name": "npm package integration > ESM imports > should import defineConfig",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 49
+        },
+        {
+          "name": "npm package integration > ESM imports > should import JestParser",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 49
+        },
+        {
+          "name": "npm package integration > ESM imports > should import PlaywrightParser",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 49
+        },
+        {
+          "name": "npm package integration > ESM imports > should import ConsoleReporter",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 49
+        },
+        {
+          "name": "npm package integration > ESM imports > should import JsonReporter",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 50
+        },
+        {
+          "name": "npm package integration > ESM imports > should import MarkdownReporter",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 49
+        },
+        {
+          "name": "npm package integration > CLI > should have CLI binary in node_modules/.bin",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "npm package integration > CLI > should output version with --version",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 406
+        },
+        {
+          "name": "npm package integration > CLI > should output help with --help",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 391
+        },
+        {
+          "name": "npm package integration > TypeScript types > should include declaration files",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 0
+        },
+        {
+          "name": "npm package integration > functionality > should create TestRunner instance",
+          "file": "/Users/mike/WebstormProjects/testfold/tests/unit/npm-package.test.ts",
+          "status": "passed",
+          "duration": 47
+        }
+      ]
     }
   ]
 }

@@ -29,5 +29,14 @@ claude-temp-files/
 *.tmp
 *.bak
 
+# Workflow workspace
+moira-ws/
+
+# Git hooks
+.github/hooks/
+
+# Supervisor logs
+.supervisor_logs/
+
 # Coverage
 coverage/

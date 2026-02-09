@@ -12,8 +12,11 @@ import { ConsoleReporter } from '../reporters/console.js';
 import { JsonReporter } from '../reporters/json.js';
 import { MarkdownReporter } from '../reporters/markdown.js';
 import { TimingReporter } from '../reporters/timing.js';
+import { TimingTextReporter } from '../reporters/timing-text.js';
 import { TextReporter } from '../reporters/text.js';
+import { SummaryLogReporter } from '../reporters/summary-log.js';
 import type { Reporter } from '../reporters/types.js';
+import { loadCustomReporter, isReporterPath } from '../reporters/custom.js';
 import { cleanSuiteArtifacts, type SuiteArtifacts } from '../utils/files.js';
 
 export interface RunOptions {
@@ -24,9 +27,15 @@ export interface RunOptions {
   /** Working directory */
   cwd?: string;
   /** Reporter override (replaces config reporters) */
-  reporter?: string;
+  reporter?: string[];
   /** Pass-through arguments appended to test commands */
   passThrough?: string[];
+  /** Grep pattern to filter tests by name */
+  grep?: string;
+  /** Grep-invert pattern to exclude tests by name */
+  grepInvert?: string;
+  /** Filter by test file path */
+  file?: string;
 }
 
 export class TestRunner {
@@ -95,10 +104,10 @@ export class TestRunner {
     await cleanSuiteArtifacts(artifactsDir, suiteArtifacts);
 
     // Create reporters (use override if provided)
-    const reporterNames = options.reporter
-      ? [options.reporter]
+    const reporterNames = options.reporter && options.reporter.length > 0
+      ? options.reporter
       : this.config.reporters;
-    const reporters = this.createReporters(artifactsDir, reporterNames);
+    const reporters = await this.createReporters(artifactsDir, reporterNames, cwd);
 
     // Create and run orchestrator
     const orchestrator = new Orchestrator({
@@ -108,19 +117,30 @@ export class TestRunner {
       cwd,
       passThrough: options.passThrough,
       envFileVars,
+      grep: options.grep,
+      grepInvert: options.grepInvert,
+      file: options.file,
     });
 
     return orchestrator.run(suiteNames);
   }
 
-  private createReporters(
+  private async createReporters(
     artifactsDir: string,
     reporterNames: string[],
-  ): Reporter[] {
+    cwd: string,
+  ): Promise<Reporter[]> {
     const reporters: Reporter[] = [];
     let consoleReporter: ConsoleReporter | null = null;
 
     for (const name of reporterNames) {
+      // Check if reporter name is a file path (custom reporter)
+      if (isReporterPath(name)) {
+        const custom = await loadCustomReporter(name, cwd, artifactsDir);
+        reporters.push(custom);
+        continue;
+      }
+
       switch (name) {
         case 'console':
           // Console reporter added last to see all artifacts
@@ -135,11 +155,16 @@ export class TestRunner {
         case 'timing':
           reporters.push(new TimingReporter(resolve(artifactsDir, 'timing.json')));
           break;
+        case 'timing-text':
+          reporters.push(new TimingTextReporter({ outputDir: artifactsDir }));
+          break;
         case 'text':
           reporters.push(new TextReporter(resolve(artifactsDir, 'results.txt')));
           break;
+        case 'summary-log':
+          reporters.push(new SummaryLogReporter(resolve(artifactsDir, 'test-summary.log')));
+          break;
         default:
-          // TODO: Support custom reporters
           console.warn(`Unknown reporter: ${name}`);
       }
     }

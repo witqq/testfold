@@ -15,8 +15,11 @@ export type {
   AggregatedResults,
   FailureDetail,
   HooksConfig,
+  GuardResult,
   UrlExtractor,
+  ErrorCategory,
 } from './config/index.js';
+export { ExitCode } from './config/index.js';
 
 // Environment loading
 export {
@@ -41,6 +44,9 @@ export { ConsoleReporter } from './reporters/console.js';
 export { JsonReporter } from './reporters/json.js';
 export { MarkdownReporter } from './reporters/markdown.js';
 export { TextReporter } from './reporters/text.js';
+export { TimingTextReporter } from './reporters/timing-text.js';
+export { SummaryLogReporter } from './reporters/summary-log.js';
+export { loadCustomReporter, isReporterPath } from './reporters/custom.js';
 export type { Reporter } from './reporters/types.js';
 
 // Utils

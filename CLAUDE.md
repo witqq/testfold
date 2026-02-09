@@ -61,6 +61,13 @@ testfold unit integration             # Run specific suites
 testfold -c custom.config.ts          # Custom config
 testfold -e staging                   # Environment
 testfold -r json                      # Override reporter
+testfold -r console,json,timing-text  # Multiple reporters
+testfold -r ./my-reporter.ts          # Custom reporter from file
+testfold -g "auth"                    # Filter by test name
+testfold --grep-invert "slow"         # Exclude tests by pattern
+testfold -f auth.test.ts              # Filter by file
+testfold --dry-run                    # Preview commands without running
+testfold --dry-run unit               # Preview only unit suite
 
 # Pass-through to test framework
 testfold -- --testNamePattern="auth"  # Args after -- passed to test command
@@ -70,6 +77,15 @@ testfold -- --verbose --coverage      # Multiple pass-through args
 testfold unit -- user                 # "user" resolved to tests/unit/user.test.ts
 testfold unit -- auth                 # If unique match, resolved to full path
 ```
+
+### Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| 0 | All tests passed |
+| 1 | One or more tests failed |
+| 2 | Infrastructure error (config, parse, spawn failure) |
+| 3 | Suite killed by timeout |
 
 ## Testing
 
@@ -107,8 +123,8 @@ src/
 ├── config/               # Config loading & validation
 ├── core/                 # Runner, orchestrator, executor
 ├── parsers/              # Jest, Playwright, Custom parsers
-├── reporters/            # Console, JSON, Markdown, Timing, Text reporters
-├── utils/                # ANSI strip, file ops, sanitization, path resolver
+├── reporters/            # Console, JSON, Markdown, Timing, Timing-Text, Text, Summary-Log, Custom reporters
+├── utils/                # ANSI strip, file ops, sanitization, path resolver, progress formatter
 └── cli/                  # CLI entry point
 ```
 
@@ -180,11 +196,14 @@ interface Reporter {
 
 | Reporter | Output |
 |----------|--------|
-| `console` | Terminal output with colors and test hierarchy |
-| `json` | `summary.json` with structured data |
+| `console` | Terminal output with colors, test hierarchy, consolidated failures, re-run instructions, agent block, JSON summary line, coverage hint. Progress to stderr |
+| `json` | `summary.json` with failedTests[], errors[], per-suite testResults[] |
 | `markdown-failures` | Per-test failure reports in `failures/` |
 | `timing` | `timing.json` with slowest tests sorted by duration |
+| `timing-text` | Per-suite `.txt` files with top slowest tests and file grouping |
 | `text` | Plain text output for CI (no ANSI, no markdown) |
+| `summary-log` | ANSI-free `test-summary.log` with summary table |
+| Custom path | `./my-reporter.ts` — custom Reporter loaded from file |
 
 ## v0.2.0 Features
 
@@ -203,3 +222,29 @@ Pass-through arguments that look like file prefixes are resolved to full paths. 
 ## Notes
 
 Локальная папка проекта временно называется `claude-test-runner`, но пакет и репозиторий переименованы в `testfold`.
+
+## Agent-Friendly Features
+
+### Semantic Exit Codes
+Exit codes 0-3 instead of boolean. See exit codes table above. `ErrorCategory` on SuiteResult enables categorization.
+
+### Dry-Run Mode
+`--dry-run` prints resolved commands for each suite without execution.
+
+### Consolidated Failure Summary
+On failure, all failing tests across all suites shown in one section with suite name, test name, file path, truncated error.
+
+### Re-Run Instructions
+Exact CLI commands to re-run failed tests. Framework-appropriate flags, grouped by suite, per-file commands (≤5 unique files).
+
+### Agent Instructions Block
+`=== AGENT INSTRUCTIONS ===` delimited block with failure count, affected suites, top error patterns, suggested actions. Only on failure.
+
+### JSON Summary Line
+`TESTFOLD_RESULT:{json}` as the very last line of console output. Always printed. Contains success, passed, failed, skipped, duration, exitCode.
+
+### Coverage Detection
+Checks for `coverage/` directory in project root. Prints path when found.
+
+### Real-Time Progress
+Orchestrator streams executor output through progress formatter. Emits `[SuiteName] … N tests (X passed, Y failed) Ns` to stderr every 10 tests. Supports Jest and Playwright patterns.

@@ -37,19 +37,19 @@ describe('parseArgs', () => {
     it('should parse --reporter flag', () => {
       const args = parseArgs(['--reporter', 'json']);
 
-      expect(args.reporter).toBe('json');
+      expect(args.reporter).toEqual(['json']);
     });
 
     it('should parse -r alias', () => {
       const args = parseArgs(['-r', 'console']);
 
-      expect(args.reporter).toBe('console');
+      expect(args.reporter).toEqual(['console']);
     });
 
-    it('should be undefined when not specified', () => {
+    it('should return empty array when not specified', () => {
       const args = parseArgs([]);
 
-      expect(args.reporter).toBeUndefined();
+      expect(args.reporter).toEqual([]);
     });
   });
 
@@ -83,7 +83,7 @@ describe('parseArgs', () => {
     it('should not parse pass-through as CLI flags', () => {
       const args = parseArgs(['--reporter', 'json', '--', '-r', 'console']);
 
-      expect(args.reporter).toBe('json');
+      expect(args.reporter).toEqual(['json']);
       expect(args.passThrough).toEqual(['-r', 'console']);
     });
   });
@@ -107,7 +107,7 @@ describe('parseArgs', () => {
       expect(args.suites).toEqual(['unit']);
       expect(args.config).toBe('custom.config.ts');
       expect(args.env).toBe('staging');
-      expect(args.reporter).toBe('json');
+      expect(args.reporter).toEqual(['json']);
       expect(args.failFast).toBe(true);
       expect(args.passThrough).toEqual(['--testNamePattern=auth', '--verbose']);
     });

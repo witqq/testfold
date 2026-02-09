@@ -51,16 +51,25 @@ export interface Suite {
   parser?: string;
 }
 
+/** Guard result returned by hooks to influence suite success */
+export interface GuardResult {
+  ok: boolean;
+  error?: string;
+}
+
 export interface HooksConfig {
   beforeAll?: () => Promise<void>;
   afterAll?: (results: AggregatedResults) => Promise<void>;
-  beforeSuite?: (suite: Suite) => Promise<void>;
-  afterSuite?: (suite: Suite, result: SuiteResult) => Promise<void>;
+  beforeSuite?: (suite: Suite) => Promise<void | GuardResult>;
+  afterSuite?: (suite: Suite, result: SuiteResult) => Promise<void | GuardResult>;
 }
 
 export interface Config {
   /** Directory for test artifacts */
   artifactsDir: string;
+
+  /** Base directory for resolving path prefixes (defaults to './tests') */
+  testsDir?: string;
 
   /** Test suites configuration */
   suites: Suite[];
@@ -110,7 +119,24 @@ export interface SuiteResult {
   resultFile: string;
   /** Individual test results for timing analysis */
   testResults?: TestResult[];
+  /** Error category for semantic exit code determination */
+  errorCategory?: ErrorCategory;
 }
+
+/** Semantic exit codes for agent-friendly error categorization */
+export enum ExitCode {
+  /** All tests passed */
+  PASS = 0,
+  /** One or more tests failed */
+  TEST_FAILURE = 1,
+  /** Infrastructure error (parse failure, spawn error, config error) */
+  INFRA_ERROR = 2,
+  /** Suite killed by timeout */
+  TIMEOUT = 3,
+}
+
+/** Error category for a suite result */
+export type ErrorCategory = 'none' | 'test_failure' | 'infra_error' | 'timeout';
 
 export interface AggregatedResults {
   suites: SuiteResult[];
@@ -122,4 +148,6 @@ export interface AggregatedResults {
   };
   success: boolean;
   passRate: number;
+  /** Semantic exit code for process exit */
+  exitCode: ExitCode;
 }

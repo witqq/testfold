@@ -22,7 +22,7 @@ export const SuiteSchema = z.object({
   resultFile: z.string().min(1),
   logFile: z.string().optional(),
   timeout: z.number().positive().optional(),
-  workers: z.number().positive().optional(),
+  workers: z.number().int().positive().optional(),
   env: z.record(z.string()).optional(),
   environments: z.record(SuiteEnvironmentSchema).optional(),
   parser: z.string().optional(),
@@ -32,11 +32,11 @@ export const HooksSchema = z
   .object({
     beforeAll: z.function().args().returns(z.promise(z.void())).optional(),
     afterAll: z.function().args(z.any()).returns(z.promise(z.void())).optional(),
-    beforeSuite: z.function().args(z.any()).returns(z.promise(z.void())).optional(),
+    beforeSuite: z.function().args(z.any()).returns(z.promise(z.any())).optional(),
     afterSuite: z
       .function()
       .args(z.any(), z.any())
-      .returns(z.promise(z.void()))
+      .returns(z.promise(z.any()))
       .optional(),
   })
   .optional();

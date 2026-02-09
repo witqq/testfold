@@ -52,8 +52,36 @@ interface PlaywrightTestResult {
 }
 
 export class PlaywrightParser implements Parser {
-  async parse(jsonPath: string, _logPath?: string): Promise<ParseResult> {
-    if (!existsSync(jsonPath)) {
+  async parse(jsonPath: string, logPath?: string): Promise<ParseResult> {
+    const jsonExists = existsSync(jsonPath);
+    let content = '';
+
+    if (jsonExists) {
+      content = (await readFile(jsonPath, 'utf-8')).trim();
+    }
+
+    if (!jsonExists || content === '') {
+      // Check if framework crashed by looking at log
+      if (logPath && existsSync(logPath)) {
+        const log = await readFile(logPath, 'utf-8');
+        if (this.detectFrameworkCrash(log)) {
+          return {
+            passed: 0,
+            failed: 1,
+            skipped: 0,
+            duration: 0,
+            success: false,
+            failures: [
+              {
+                testName: 'Framework Crash',
+                filePath: '',
+                error: this.extractErrorSnippet(log),
+              },
+            ],
+          };
+        }
+      }
+
       return {
         passed: 0,
         failed: 0,
@@ -64,8 +92,46 @@ export class PlaywrightParser implements Parser {
       };
     }
 
-    const content = await readFile(jsonPath, 'utf-8');
-    const data = JSON.parse(content) as PlaywrightResult;
+    let data: PlaywrightResult;
+    try {
+      data = JSON.parse(content) as PlaywrightResult;
+    } catch {
+      // Corrupted/truncated JSON — try crash detection from log
+      if (logPath && existsSync(logPath)) {
+        const log = await readFile(logPath, 'utf-8');
+        if (this.detectFrameworkCrash(log)) {
+          return {
+            passed: 0,
+            failed: 1,
+            skipped: 0,
+            duration: 0,
+            success: false,
+            failures: [
+              {
+                testName: 'Framework Crash',
+                filePath: '',
+                error: this.extractErrorSnippet(log),
+              },
+            ],
+          };
+        }
+      }
+
+      return {
+        passed: 0,
+        failed: 1,
+        skipped: 0,
+        duration: 0,
+        success: false,
+        failures: [
+          {
+            testName: 'Result Parse Error',
+            filePath: jsonPath,
+            error: 'JSON result file is corrupted or truncated',
+          },
+        ],
+      };
+    }
 
     const failures: FailureDetail[] = [];
     const testResults: TestResult[] = [];
@@ -167,5 +233,39 @@ export class PlaywrightParser implements Parser {
         this.collectResults(suite.suites, suiteTitle, failures, testResults);
       }
     }
+  }
+
+  private detectFrameworkCrash(log: string): boolean {
+    const errorPatterns = [
+      'Error:',
+      'ReferenceError',
+      'SyntaxError',
+      'TypeError',
+      'Timed out',
+      'ECONNREFUSED',
+      'globalSetup',
+      'failed to run',
+      'Cannot find module',
+    ];
+    return errorPatterns.some((pattern) => log.includes(pattern));
+  }
+
+  private extractErrorSnippet(log: string, lines = 10): string {
+    const logLines = log.split('\n');
+    const errorIndex = logLines.findIndex(
+      (line) =>
+        line.includes('Error:') ||
+        line.includes('failed') ||
+        line.includes('Cannot find') ||
+        line.includes('globalSetup'),
+    );
+
+    if (errorIndex === -1) {
+      return logLines.slice(0, lines).join('\n');
+    }
+
+    const start = Math.max(0, errorIndex - 2);
+    const end = Math.min(logLines.length, errorIndex + lines);
+    return logLines.slice(start, end).join('\n');
   }
 }

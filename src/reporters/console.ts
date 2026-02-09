@@ -151,9 +151,167 @@ export class ConsoleReporter implements Reporter {
     );
     console.log();
 
+    // Consolidated failures and re-run instructions
+    if (!results.success) {
+      this.printConsolidatedFailures(results);
+      this.printRerunInstructions(results);
+      this.printAgentInstructions(results);
+    }
+
+    // Coverage hint
+    this.printCoverageHint();
+
     // Show artifact inventory if artifactsDir is available
     if (this.artifactsDir) {
       this.printArtifacts(results);
+    }
+
+    // JSON summary line — always printed as the very last line
+    this.printJsonSummary(results);
+  }
+
+  /**
+   * Print structured agent instructions block for AI agent consumption
+   */
+  private printAgentInstructions(results: AggregatedResults): void {
+    const failedSuites = results.suites.filter((s) => !s.success);
+    const totalFailures = results.totals.failed;
+
+    // Collect top error patterns (deduplicated first lines)
+    const errorPatterns = new Map<string, number>();
+    for (const suite of failedSuites) {
+      for (const f of suite.failures) {
+        const pattern = f.error?.split('\n')[0]?.slice(0, 80) ?? 'Unknown error';
+        errorPatterns.set(pattern, (errorPatterns.get(pattern) ?? 0) + 1);
+      }
+    }
+    const topPatterns = [...errorPatterns.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+
+    console.log(`${colors.cyan}${'─'.repeat(50)}${colors.reset}`);
+    console.log('=== AGENT INSTRUCTIONS ===');
+    console.log();
+    console.log(`Failures: ${totalFailures}`);
+    console.log(`Affected suites: ${failedSuites.map((s) => s.name).join(', ')}`);
+
+    if (topPatterns.length > 0) {
+      console.log();
+      console.log('Top error patterns:');
+      for (const [pattern, count] of topPatterns) {
+        console.log(`  ${count}x ${pattern}`);
+      }
+    }
+
+    console.log();
+    console.log('Suggested actions:');
+    console.log('  1. Review the FAILURES section above for details');
+    console.log('  2. Use RE-RUN INSTRUCTIONS to reproduce failures');
+    console.log('  3. Check log files in test-results/ for full output');
+    if (results.exitCode === 2) {
+      console.log('  4. Exit code 2 indicates infrastructure error — check test setup');
+    } else if (results.exitCode === 3) {
+      console.log('  4. Exit code 3 indicates timeout — consider increasing suite timeout');
+    }
+    console.log();
+    console.log('=== END AGENT INSTRUCTIONS ===');
+    console.log();
+  }
+
+  /**
+   * Print machine-readable JSON summary as the very last line of output
+   */
+  private printJsonSummary(results: AggregatedResults): void {
+    const summary = {
+      success: results.success,
+      passed: results.totals.passed,
+      failed: results.totals.failed,
+      skipped: results.totals.skipped,
+      duration: results.totals.duration,
+      exitCode: results.exitCode,
+    };
+    console.log(`TESTFOLD_RESULT:${JSON.stringify(summary)}`);
+  }
+
+  /**
+   * Print consolidated failure list across all suites
+   */
+  private printConsolidatedFailures(results: AggregatedResults): void {
+    const allFailures: Array<{ suite: string; testName: string; filePath: string; error: string }> = [];
+
+    for (const suite of results.suites) {
+      for (const failure of suite.failures) {
+        allFailures.push({
+          suite: suite.name,
+          testName: failure.testName,
+          filePath: failure.filePath,
+          error: failure.error?.split('\n')[0]?.slice(0, 120) ?? '',
+        });
+      }
+    }
+
+    if (allFailures.length === 0) return;
+
+    console.log(`${colors.cyan}${'─'.repeat(50)}${colors.reset}`);
+    console.log(`${colors.bold}  FAILURES${colors.reset}`);
+    console.log(`${colors.cyan}${'─'.repeat(50)}${colors.reset}`);
+    console.log();
+
+    for (const f of allFailures) {
+      console.log(`${colors.red}✗${colors.reset} ${colors.bold}[${f.suite}]${colors.reset} ${f.testName}`);
+      if (f.filePath) {
+        console.log(`  ${colors.gray}${f.filePath}${colors.reset}`);
+      }
+      if (f.error) {
+        console.log(`  ${colors.red}${f.error}${colors.reset}`);
+      }
+    }
+
+    console.log();
+  }
+
+  /**
+   * Print re-run instructions for failed suites
+   */
+  private printRerunInstructions(results: AggregatedResults): void {
+    const failedSuites = results.suites.filter((s) => !s.success);
+    if (failedSuites.length === 0) return;
+
+    console.log(`${colors.cyan}${'─'.repeat(50)}${colors.reset}`);
+    console.log(`${colors.bold}  RE-RUN INSTRUCTIONS${colors.reset}`);
+    console.log(`${colors.cyan}${'─'.repeat(50)}${colors.reset}`);
+    console.log();
+
+    // Re-run all failed suites
+    const suiteNames = failedSuites.map((s) => s.name.toLowerCase()).join(' ');
+    console.log(`${colors.gray}# Re-run all failed suites${colors.reset}`);
+    console.log(`testfold ${suiteNames}`);
+    console.log();
+
+    // Per-suite re-run with specific files
+    for (const suite of failedSuites) {
+      const uniqueFiles = [...new Set(suite.failures.map((f) => f.filePath).filter(Boolean))];
+
+      if (uniqueFiles.length > 0 && uniqueFiles.length <= 5) {
+        console.log(`${colors.gray}# Re-run ${suite.name} failed files${colors.reset}`);
+        for (const file of uniqueFiles) {
+          console.log(`testfold ${suite.name.toLowerCase()} -- ${file}`);
+        }
+        console.log();
+      }
+    }
+  }
+
+  /**
+   * Print coverage hint if standard coverage directory exists
+   */
+  private printCoverageHint(): void {
+    const coveragePath = join(process.cwd(), 'coverage');
+    if (existsSync(coveragePath)) {
+      console.log(
+        `${colors.cyan}📊 Coverage data available: ${coveragePath}${colors.reset}`,
+      );
+      console.log();
     }
   }
 

@@ -4,7 +4,8 @@
 
 import { join } from 'node:path';
 import type { ValidatedConfig } from '../config/schema.js';
-import type { Suite, SuiteResult, AggregatedResults } from '../config/types.js';
+import type { Suite, SuiteResult, AggregatedResults, GuardResult, ErrorCategory } from '../config/types.js';
+import { ExitCode } from '../config/types.js';
 import type { Reporter } from '../reporters/types.js';
 import type { ParseResult } from '../parsers/types.js';
 import { JestParser } from '../parsers/jest.js';
@@ -12,6 +13,7 @@ import { PlaywrightParser } from '../parsers/playwright.js';
 import { CustomParserLoader } from '../parsers/custom.js';
 import { executeCommand } from './executor.js';
 import { readEnvFileContent } from '../config/env-loader.js';
+import { createProgressCallback } from '../utils/progress.js';
 
 export interface OrchestratorOptions {
   config: ValidatedConfig;
@@ -22,6 +24,12 @@ export interface OrchestratorOptions {
   passThrough?: string[];
   /** Environment variables loaded from .env file */
   envFileVars?: Record<string, string>;
+  /** Grep pattern to filter tests by name */
+  grep?: string;
+  /** Grep-invert pattern to exclude tests by name */
+  grepInvert?: string;
+  /** Filter by test file path */
+  file?: string;
 }
 
 export class Orchestrator {
@@ -31,6 +39,9 @@ export class Orchestrator {
   private cwd: string;
   private passThrough: string[];
   private envFileVars: Record<string, string>;
+  private grep?: string;
+  private grepInvert?: string;
+  private file?: string;
 
   constructor(options: OrchestratorOptions) {
     this.config = options.config;
@@ -39,6 +50,9 @@ export class Orchestrator {
     this.cwd = options.cwd;
     this.passThrough = options.passThrough ?? [];
     this.envFileVars = options.envFileVars ?? {};
+    this.grep = options.grep;
+    this.grepInvert = options.grepInvert;
+    this.file = options.file;
   }
 
   async run(suiteNames?: string[]): Promise<AggregatedResults> {
@@ -111,9 +125,28 @@ export class Orchestrator {
   }
 
   private async runSuite(suite: Suite): Promise<SuiteResult> {
-    // Run before hook
+    // Run before hook and check guard result
     if (this.config.hooks?.beforeSuite) {
-      await this.config.hooks.beforeSuite(suite);
+      const guardResult = await this.config.hooks.beforeSuite(suite);
+      if (guardResult && typeof guardResult === 'object' && 'ok' in guardResult && !guardResult.ok) {
+        const errorMsg = (guardResult as GuardResult).error ?? 'beforeSuite guard failed';
+        const result: SuiteResult = {
+          name: suite.name,
+          passed: 0,
+          failed: 1,
+          skipped: 0,
+          duration: 0,
+          success: false,
+          failures: [{ testName: 'beforeSuite Guard', filePath: '', error: errorMsg }],
+          logFile: '',
+          resultFile: '',
+          errorCategory: 'infra_error',
+        };
+        for (const reporter of this.reporters) {
+          reporter.onSuiteComplete(suite, result);
+        }
+        return result;
+      }
     }
 
     // Determine environment
@@ -155,7 +188,8 @@ export class Orchestrator {
         suite.resultFile.replace('.json', '.log'),
       );
 
-    // Execute command
+    // Execute command with progress tracking
+    const progress = createProgressCallback(suite.name, suite.type);
     const execResult = await executeCommand(suite, {
       cwd: this.cwd,
       env,
@@ -163,16 +197,28 @@ export class Orchestrator {
       logFile,
       passThrough: this.passThrough,
       testsDir: this.config.testsDir,
+      grep: this.grep,
+      grepInvert: this.grepInvert,
+      file: this.file,
+      onOutput: progress.onOutput,
     });
 
     // Parse results with graceful error recovery
     // Attempt to parse even if executor returned non-zero exit code
     let parseResult: ParseResult;
+    let errorCategory: ErrorCategory = 'none';
+
+    // Determine initial error category from executor result
+    if (execResult.exitCode === 124) {
+      errorCategory = 'timeout';
+    }
+
     try {
       const parser = this.getParser(suite);
       parseResult = await parser.parse(resultFile, logFile);
     } catch (parseError) {
-      // Graceful recovery: create error result instead of throwing
+      // Parse failure = infrastructure error
+      errorCategory = errorCategory === 'timeout' ? 'timeout' : 'infra_error';
       parseResult = {
         passed: 0,
         failed: 1,
@@ -192,6 +238,11 @@ export class Orchestrator {
       };
     }
 
+    // If no category set yet, determine from test results
+    if (errorCategory === 'none' && parseResult.failed > 0) {
+      errorCategory = 'test_failure';
+    }
+
     // Success is determined by test results, not executor exit code
     // This allows partial results from failed runs to be reported
     const result: SuiteResult = {
@@ -205,16 +256,26 @@ export class Orchestrator {
       logFile,
       resultFile,
       testResults: parseResult.testResults,
+      errorCategory,
     };
 
-    // Notify reporters
-    for (const reporter of this.reporters) {
-      reporter.onSuiteComplete(suite, result);
+    // Run after hook and check guard result
+    if (this.config.hooks?.afterSuite) {
+      const guardResult = await this.config.hooks.afterSuite(suite, result);
+      if (guardResult && typeof guardResult === 'object' && 'ok' in guardResult && !guardResult.ok) {
+        const errorMsg = (guardResult as GuardResult).error ?? 'afterSuite guard failed';
+        result.success = false;
+        result.failed += 1;
+        result.failures.push({ testName: 'afterSuite Guard', filePath: '', error: errorMsg });
+        if (!result.errorCategory || result.errorCategory === 'none') {
+          result.errorCategory = 'infra_error';
+        }
+      }
     }
 
-    // Run after hook
-    if (this.config.hooks?.afterSuite) {
-      await this.config.hooks.afterSuite(suite, result);
+    // Notify reporters (after guard check so reporters see final state)
+    for (const reporter of this.reporters) {
+      reporter.onSuiteComplete(suite, result);
     }
 
     return result;
@@ -252,11 +313,47 @@ export class Orchestrator {
     const total = totals.passed + totals.failed + totals.skipped;
     const passRate = total > 0 ? (totals.passed / total) * 100 : 100;
 
+    // Compute semantic exit code: worst category wins
+    // Priority: timeout > infra_error > test_failure > pass
+    const exitCode = this.computeExitCode(results);
+
     return {
       suites: results,
       totals,
       success: totals.failed === 0,
       passRate,
+      exitCode,
     };
+  }
+
+  /**
+   * Compute semantic exit code from suite results.
+   * Priority: timeout (3) > infra_error (2) > test_failure (1) > pass (0)
+   */
+  private computeExitCode(results: SuiteResult[]): ExitCode {
+    let worst = ExitCode.PASS;
+
+    for (const r of results) {
+      switch (r.errorCategory) {
+        case 'timeout':
+          return ExitCode.TIMEOUT; // highest priority, return immediately
+        case 'infra_error':
+          worst = ExitCode.INFRA_ERROR;
+          break;
+        case 'test_failure':
+          if (worst < ExitCode.TEST_FAILURE) {
+            worst = ExitCode.TEST_FAILURE;
+          }
+          break;
+        default:
+          // Safety fallback: if suite failed but has no errorCategory, treat as test failure
+          if (!r.success && worst < ExitCode.TEST_FAILURE) {
+            worst = ExitCode.TEST_FAILURE;
+          }
+          break;
+      }
+    }
+
+    return worst;
   }
 }

@@ -21,11 +21,25 @@ export class JsonReporter implements Reporter {
   async onComplete(results: AggregatedResults): Promise<void> {
     await mkdir(dirname(this.outputPath), { recursive: true });
 
+    const failedTests: string[] = [];
+    const errors: string[] = [];
+
+    for (const suite of results.suites) {
+      for (const failure of suite.failures) {
+        failedTests.push(failure.testName);
+        if (failure.error) {
+          errors.push(failure.error);
+        }
+      }
+    }
+
     const output = {
       timestamp: new Date().toISOString(),
       success: results.success,
       passRate: results.passRate,
       totals: results.totals,
+      failedTests,
+      errors,
       suites: results.suites.map((s) => ({
         name: s.name,
         passed: s.passed,
@@ -35,6 +49,13 @@ export class JsonReporter implements Reporter {
         success: s.success,
         resultFile: s.resultFile,
         logFile: s.logFile,
+        testResults: s.testResults?.map((t) => ({
+          name: t.name,
+          file: t.file,
+          status: t.status,
+          duration: t.duration,
+          error: t.error,
+        })),
       })),
     };
 

@@ -67,7 +67,7 @@ describe('TestRunner', () => {
 
       // Override with single JSON reporter
       const results = await runner.run(undefined, {
-        reporter: 'json',
+        reporter: ['json'],
         cwd: __dirname,
       });
 

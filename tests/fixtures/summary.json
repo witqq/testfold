@@ -1,23 +1,25 @@
 {
-  "timestamp": "2026-01-01T06:55:39.971Z",
+  "timestamp": "2026-02-09T00:21:21.717Z",
   "success": true,
   "passRate": 100,
   "totals": {
     "passed": 0,
     "failed": 0,
     "skipped": 0,
-    "duration": 10
+    "duration": 9
   },
+  "failedTests": [],
+  "errors": [],
   "suites": [
     {
       "name": "test-suite",
       "passed": 0,
       "failed": 0,
       "skipped": 0,
-      "duration": 10,
+      "duration": 9,
       "success": true,
-      "resultFile": "/Users/mike/WebstormProjects/claude-test-runner/tests/fixtures/temp-runner/jest-result.json",
-      "logFile": "/Users/mike/WebstormProjects/claude-test-runner/tests/fixtures/temp-runner/jest-result.log"
+      "resultFile": "/Users/mike/WebstormProjects/testfold/tests/fixtures/temp-runner/jest-result.json",
+      "logFile": "/Users/mike/WebstormProjects/testfold/tests/fixtures/temp-runner/jest-result.log"
     }
   ]
 }

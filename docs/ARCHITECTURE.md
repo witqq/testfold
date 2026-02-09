@@ -35,24 +35,28 @@ testfold is a unified test runner that orchestrates multiple test frameworks (Je
 
 ### Core Layer (`src/core/`)
 
-- **runner.ts** - `TestRunner` class, main entry point
-- **orchestrator.ts** - Coordinates suite execution (parallel/sequential)
-- **executor.ts** - Spawns child processes, captures output
+- **runner.ts** - `TestRunner` class, main entry point. Creates reporters (built-in + custom from file paths)
+- **orchestrator.ts** - Coordinates suite execution (parallel/sequential), guard-aware hooks, filter flag passing
+- **executor.ts** - Spawns child processes with `detached: true`, captures output. SIGKILL escalation on timeout, workers→maxWorkers mapping, progress streaming via onOutput callback
 
 ### Parsers (`src/parsers/`)
 
 - **types.ts** - `Parser` and `ParseResult` interfaces
-- **jest.ts** - Parses Jest JSON reporter output
-- **playwright.ts** - Parses Playwright JSON reporter output
+- **jest.ts** - Parses Jest JSON reporter output, crash detection from logs
+- **playwright.ts** - Parses Playwright JSON reporter output, crash detection from logs (missing/empty/corrupted JSON)
+- **custom.ts** - Lazy-loading custom parser from file path
 
 ### Reporters (`src/reporters/`)
 
 - **types.ts** - `Reporter` interface
 - **console.ts** - Colored terminal output with summary table, artifact inventory, and test hierarchy display
-- **json.ts** - Generates `summary.json`
+- **json.ts** - Generates `summary.json` with failedTests[], errors[], per-suite testResults[]
 - **markdown.ts** - Individual failure reports in Markdown with test hierarchy
 - **timing.ts** - Generates `timing.json` with tests sorted by duration
+- **timing-text.ts** - Per-suite `.txt` files with top slowest tests and file grouping
 - **text.ts** - Plain text output for CI/tool integration (no ANSI, no markdown)
+- **summary-log.ts** - ANSI-free `test-summary.log` matching console summary format
+- **custom.ts** - Dynamic loading of custom reporters from file paths
 
 ### Utils (`src/utils/`)
 
@@ -101,6 +105,7 @@ testfold is a unified test runner that orchestrates multiple test frameworks (Je
 ```typescript
 interface Config {
   artifactsDir: string;
+  testsDir?: string;
   suites: Suite[];
   parallel?: boolean;
   failFast?: boolean;
@@ -114,6 +119,7 @@ interface Suite {
   command: string;
   resultFile: string;
   timeout?: number;
+  workers?: number;
   env?: Record<string, string>;
   environments?: Record<string, EnvironmentConfig>;
 }
@@ -175,13 +181,20 @@ class SlackReporter implements Reporter {
 ### Hooks
 
 ```typescript
+interface GuardResult {
+  ok: boolean;
+  error?: string;
+}
+
 hooks: {
   beforeAll: async () => { /* global setup */ },
   afterAll: async (results) => { /* global cleanup */ },
-  beforeSuite: async (suite) => { /* suite setup */ },
-  afterSuite: async (suite, result) => { /* suite cleanup */ }
+  beforeSuite: async (suite) => { /* suite setup, return GuardResult to gate */ },
+  afterSuite: async (suite, result) => { /* suite cleanup, return GuardResult to gate */ }
 }
 ```
+
+`beforeSuite`/`afterSuite` can return `GuardResult`. If `{ ok: false }`, the suite is marked failed regardless of test results.
 
 ## Artifact Management
 
