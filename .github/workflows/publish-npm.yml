@@ -1,0 +1,116 @@
+name: Publish npm release asset
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Annotated release tag, for example v0.4.0
+        required: true
+        type: string
+      sha256:
+        description: Accepted SHA-256 of the single GitHub Release asset
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Verify exact asset and publish with OIDC
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Use Node.js 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.20.0
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Install an OIDC-capable npm CLI
+        run: npm install --global npm@11.19.1
+
+      - name: Verify and publish the accepted GitHub Release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_SHA256: ${{ inputs.sha256 }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+
+          tag="${INPUT_TAG}"
+          expected_sha256="${INPUT_SHA256}"
+          if [[ ! "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "tag must match vMAJOR.MINOR.PATCH" >&2
+            exit 1
+          fi
+          if [[ ! "${expected_sha256}" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "sha256 must contain exactly 64 lowercase hexadecimal characters" >&2
+            exit 1
+          fi
+
+          version="${tag#v}"
+          asset_name="testfold-${version}.tgz"
+          release_json="${RUNNER_TEMP}/release.json"
+          tarball="${RUNNER_TEMP}/${asset_name}"
+          manifest="${RUNNER_TEMP}/package.json"
+
+          gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${tag}" > "${release_json}"
+          asset_url="$(
+            # The JavaScript template literal is intentionally protected from shell expansion.
+            # shellcheck disable=SC2016
+            node -e '
+              const fs = require("node:fs");
+              const [file, expectedName, expectedDigest, expectedTag] = process.argv.slice(1);
+              const release = JSON.parse(fs.readFileSync(file, "utf8"));
+              if (release.tag_name !== expectedTag || release.draft || release.prerelease) {
+                throw new Error("release identity or publication state is invalid");
+              }
+              if (!Array.isArray(release.assets) || release.assets.length !== 1) {
+                throw new Error("release must contain exactly one asset");
+              }
+              const asset = release.assets[0];
+              if (
+                asset.name !== expectedName ||
+                asset.state !== "uploaded" ||
+                asset.digest !== `sha256:${expectedDigest}` ||
+                !Number.isSafeInteger(asset.size) ||
+                asset.size <= 0
+              ) {
+                throw new Error("release asset identity is invalid");
+              }
+              process.stdout.write(asset.browser_download_url);
+            ' "${release_json}" "${asset_name}" "${expected_sha256}" "${tag}"
+          )"
+
+          curl --fail --location --proto '=https' --tlsv1.2 --output "${tarball}" "${asset_url}"
+          node -e '
+            const crypto = require("node:crypto");
+            const fs = require("node:fs");
+            const [file, expectedDigest] = process.argv.slice(1);
+            const actualDigest = crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex");
+            if (actualDigest !== expectedDigest) {
+              throw new Error("downloaded asset SHA-256 is invalid");
+            }
+          ' "${tarball}" "${expected_sha256}"
+          tar -xOf "${tarball}" package/package.json > "${manifest}"
+          node -e '
+            const fs = require("node:fs");
+            const [file, expectedVersion, expectedRepository] = process.argv.slice(1);
+            const manifest = JSON.parse(fs.readFileSync(file, "utf8"));
+            if (
+              manifest.name !== "testfold" ||
+              manifest.version !== expectedVersion ||
+              manifest.repository?.url !== expectedRepository
+            ) {
+              throw new Error("packed package identity is invalid");
+            }
+          ' "${manifest}" "${version}" "git+https://github.com/${GITHUB_REPOSITORY}.git"
+
+          npm publish --access public "${asset_url}"

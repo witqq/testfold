@@ -2,15 +2,15 @@
 
 ## Test Categories
 
-| Category | Location | Purpose |
-|----------|----------|---------|
-| Unit | `tests/unit/` | Test individual functions/classes in isolation |
+| Category    | Location             | Purpose                                               |
+| ----------- | -------------------- | ----------------------------------------------------- |
+| Unit        | `tests/unit/`        | Test individual functions/classes in isolation        |
 | Integration | `tests/integration/` | Test module integration, parser/reporter combinations |
 
 ## Running Tests
 
 ```bash
-# All tests (self-testing via TestRunner)
+# Self-hosted unit suite through Testfold
 npm test
 
 # Unit tests only
@@ -18,6 +18,9 @@ npm run test:unit
 
 # Integration tests only
 npm run test:integration
+
+# Complete local release gate
+npm run verify
 ```
 
 ## Self-Testing
@@ -28,16 +31,20 @@ The module tests itself using its own `TestRunner`:
 npm test
 ```
 
-This runs `tests/scripts/run-all-tests.js` which:
+This runs `tests/scripts/run-all-tests.js`, which:
+
 1. Loads `test-runner.config.ts`
 2. Creates `TestRunner.fromConfigFile()`
 3. Executes configured suites
 4. Outputs console summary table
 5. Generates `summary.json`
 
+`npm run test:integration` runs the separate repository integration suite with Node's ESM VM support. `npm run verify` combines type checking, lint, both test routes, workflow validation, and the isolated npm candidate check.
+
 ### Configuration
 
 `test-runner.config.ts`:
+
 ```typescript
 const config: Config = {
   artifactsDir: './test-results',
@@ -56,6 +63,7 @@ const config: Config = {
 ### Output
 
 Console summary:
+
 ```
 Suite                Passed  Failed  Skipped    Time
 ───────────────────────────────────────────────────────
@@ -67,6 +75,7 @@ TOTAL                   37      0       0    1.2s
 ```
 
 JSON summary (`summary.json`):
+
 ```json
 {
   "success": true,
@@ -123,7 +132,7 @@ describe('JestParser', () => {
   it('should parse successful test results', async () => {
     const result = await parser.parse(
       resolve(fixturesDir, 'success.json'),
-      resolve(fixturesDir, 'success.log')
+      resolve(fixturesDir, 'success.log'),
     );
 
     expect(result.passed).toBeGreaterThan(0);
@@ -134,7 +143,7 @@ describe('JestParser', () => {
   it('should extract failures', async () => {
     const result = await parser.parse(
       resolve(fixturesDir, 'failures.json'),
-      resolve(fixturesDir, 'failures.log')
+      resolve(fixturesDir, 'failures.log'),
     );
 
     expect(result.failed).toBeGreaterThan(0);
@@ -161,7 +170,7 @@ describe('TestRunner', () => {
           type: 'jest',
           command: 'echo "mock"',
           resultFile: 'unit.json',
-        }
+        },
       ],
       reporters: ['json'],
     });
@@ -203,13 +212,28 @@ Fixtures should represent real-world outputs from the respective test frameworks
 Test runs produce artifacts in `test-results/`:
 
 ```
+summary.json                      # Aggregated results
 test-results/
-├── unit.json           # Unit test results
-├── unit.log            # Unit test output
-├── integration.json    # Integration test results
-├── integration.log     # Integration test output
-└── summary.json        # Aggregated results
+├── unit.json                     # Unit test results
+├── unit.log                      # Unit test output
+├── integration.json              # Integration test results
+├── integration.log               # Integration test output
+├── package/                      # Candidate and identity evidence
+└── package-consumers/            # Isolated installed consumers
 ```
+
+The root `summary.json` and the test-owned fixture summary are generated output and ignored by Git. Release evidence, candidate tarballs, and isolated consumers are written below `test-results/package/` and `test-results/package-consumers/`.
+
+## Release contract checks
+
+```bash
+npm run check:workflows
+npm run pack:check
+```
+
+The workflow check parses the committed YAML and enforces immutable Action pins, the supported Node.js matrix, least-privilege OIDC permissions, exact release-asset digest checks, and absence of npm tokens or source rebuilds in the publish job.
+
+The package check builds one candidate, compares npm and tar inventories, scans every packaged file for private paths and credential-shaped data, validates metadata and executable properties, installs the tarball with an isolated npm cache, and exercises ESM, TypeScript, and CLI entry points. It writes `test-results/package/candidate-evidence.json` for the release operator.
 
 ## Debugging Tests
 

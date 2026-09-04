@@ -2,20 +2,15 @@
 
 ## Prerequisites
 
-- Node.js 20+
+- Node.js 22.18.0+
 - npm 10+
 
 ## Setup
 
 ```bash
-# Clone repository
-git clone <repo-url>
+git clone https://github.com/witqq/testfold.git
 cd testfold
-
-# Install dependencies
-npm install
-
-# Build
+npm ci --no-audit --no-fund
 npm run build
 ```
 
@@ -39,16 +34,20 @@ Compiles TypeScript to `dist/`.
 
 ### Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Watch mode for CLI development |
-| `npm run build` | Build TypeScript |
-| `npm test` | Run all tests |
-| `npm run test:unit` | Unit tests only |
-| `npm run test:integration` | Integration tests only |
-| `npm run lint` | Run ESLint |
-| `npm run format` | Format code with Prettier |
-| `npm run format:check` | Check formatting |
+| Script                     | Description                                     |
+| -------------------------- | ----------------------------------------------- |
+| `npm run dev`              | Watch mode for CLI development                  |
+| `npm run build`            | Build TypeScript                                |
+| `npm test`                 | Run the self-hosted unit suite through Testfold |
+| `npm run test:unit`        | Run the Jest unit suite directly                |
+| `npm run test:integration` | Run repository integration tests                |
+| `npm run typecheck`        | Check strict TypeScript without emitting files  |
+| `npm run lint`             | Run ESLint                                      |
+| `npm run format`           | Format code with Prettier                       |
+| `npm run format:check`     | Check formatting                                |
+| `npm run check:workflows`  | Validate GitHub Actions release contracts       |
+| `npm run pack:check`       | Build and inspect an isolated npm candidate     |
+| `npm run verify`           | Run the complete local release gate             |
 
 ## Project Structure
 
@@ -88,28 +87,21 @@ src/
 
 ## Testing During Development
 
-Run tests against the module:
+Run the smallest relevant suite while developing, then the complete gate before handoff:
 
 ```bash
-# Unit tests
 npm run test:unit
-
-# Integration tests (requires built module)
-npm run build && npm run test:integration
+npm run test:integration
+npm run verify
 ```
 
-## Local Testing in Another Project
+## Local package testing
 
 ```bash
-# Build the module
-npm run build
-
-# Link globally
-npm link
-
-# In target project
-npm link testfold
+npm run pack:check
 ```
+
+The package check creates a tarball below `test-results/package/`, installs that exact file in a clean isolated consumer, and verifies package metadata, ESM imports, TypeScript declarations, and the CLI. It does not use the published registry version or a global link.
 
 ## Migration from Local Test Scripts
 
@@ -124,6 +116,7 @@ npm link testfold
 ### 2. Create config
 
 `testfold.config.ts`:
+
 ```typescript
 import type { Config } from 'testfold';
 
@@ -134,7 +127,8 @@ const config: Config = {
     {
       name: 'Unit',
       type: 'jest',
-      command: 'node --experimental-vm-modules node_modules/jest/bin/jest.js --json --outputFile test-results/unit.json',
+      command:
+        'node --experimental-vm-modules node_modules/jest/bin/jest.js --json --outputFile test-results/unit.json',
       resultFile: 'unit.json',
     },
     {
@@ -172,15 +166,18 @@ process.exit(results.success ? 0 : 1);
 ### 5. Artifacts
 
 After migration:
+
 - `summary.json` - aggregated results
 - `test-results/*.json` - raw parser output
 - `test-results/*.log` - stdout/stderr
 - `test-results/failures/*.md` - failure reports per test
 
-## Code Style
+## Contribution and release contracts
 
-- ESLint for linting
-- Prettier for formatting
-- TypeScript strict mode enabled
+- Work on a feature branch; do not commit directly to `master`.
+- Keep TypeScript strict and run ESLint on source, tests, and release-support scripts.
+- Use Prettier for files you change; repository-wide legacy formatting is not rewritten as part of unrelated work.
+- Do not commit `dist/`, test results, npm candidates, caches, or Moira workspaces.
+- Follow [../CONTRIBUTING.md](../CONTRIBUTING.md) for contributions and [RELEASE.md](RELEASE.md) for releases.
 
-Pre-commit hook runs linting automatically.
+Pushes, pull requests, tags, GitHub Releases, and npm publication are separate operator actions.

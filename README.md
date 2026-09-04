@@ -1,5 +1,9 @@
 # testfold
 
+[![CI](https://github.com/witqq/testfold/actions/workflows/ci.yml/badge.svg)](https://github.com/witqq/testfold/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/testfold)](https://www.npmjs.com/package/testfold)
+[![license](https://img.shields.io/npm/l/testfold)](LICENSE)
+
 Test runner designed for AI agent workflows. Runs Jest/Playwright suites and generates structured reports optimized for LLM consumption.
 
 ## Why
@@ -44,12 +48,13 @@ npm install testfold
 ```
 
 Create `testfold.config.ts`:
+
 ```typescript
 import type { Config } from 'testfold';
 
 export default {
   artifactsDir: './test-results',
-  testsDir: './tests',  // For path prefix resolution
+  testsDir: './tests', // For path prefix resolution
   reporters: ['console', 'json', 'markdown-failures', 'timing', 'text'],
   suites: [
     { name: 'Unit', type: 'jest', command: 'npx jest --json', resultFile: 'unit.json' },
@@ -80,16 +85,16 @@ testfold --dry-run                    # Preview commands without executing
 
 ### Reporters
 
-| Reporter | Output |
-|----------|--------|
-| `console` | Terminal output with colors, hierarchy, agent-friendly failure sections, JSON summary line |
-| `json` | `summary.json` with structured data, failedTests[], errors[] |
-| `markdown-failures` | Per-test failure reports in `failures/` |
-| `timing` | `timing.json` with slowest tests |
-| `timing-text` | Per-suite `.txt` files with top slowest tests and file grouping |
-| `text` | Plain text output for CI (no ANSI, no markdown) |
-| `summary-log` | ANSI-free `test-summary.log` with summary table |
-| Custom path | `./my-reporter.ts` — load Reporter from file |
+| Reporter            | Output                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| `console`           | Terminal output with colors, hierarchy, agent-friendly failure sections, JSON summary line |
+| `json`              | `summary.json` with structured data, failedTests[], errors[]                               |
+| `markdown-failures` | Per-test failure reports in `failures/`                                                    |
+| `timing`            | `timing.json` with slowest tests                                                           |
+| `timing-text`       | Per-suite `.txt` files with top slowest tests and file grouping                            |
+| `text`              | Plain text output for CI (no ANSI, no markdown)                                            |
+| `summary-log`       | ANSI-free `test-summary.log` with summary table                                            |
+| Custom path         | `./my-reporter.ts` — load Reporter from file                                               |
 
 ### Environment Support
 
@@ -97,21 +102,23 @@ Load environment-specific `.env` files:
 
 ```typescript
 export default {
-  suites: [{
-    name: 'E2E',
-    type: 'playwright',
-    command: 'npx playwright test',
-    resultFile: 'results.json',
-    environments: {
-      staging: {
-        baseUrl: 'https://staging.example.com',
-      },
-      production: {
-        envFile: '.env.prod',
-        urlExtractor: (content) => content.match(/APP_URL=(.+)/)?.[1],
+  suites: [
+    {
+      name: 'E2E',
+      type: 'playwright',
+      command: 'npx playwright test',
+      resultFile: 'results.json',
+      environments: {
+        staging: {
+          baseUrl: 'https://staging.example.com',
+        },
+        production: {
+          envFile: '.env.prod',
+          urlExtractor: (content) => content.match(/APP_URL=(.+)/)?.[1],
+        },
       },
     },
-  }],
+  ],
 } satisfies Config;
 ```
 
@@ -124,13 +131,15 @@ For test frameworks beyond Jest/Playwright:
 ```typescript
 // testfold.config.ts
 export default {
-  suites: [{
-    name: 'Custom',
-    type: 'custom',
-    command: 'my-test-runner',
-    resultFile: 'results.json',
-    parser: './parsers/my-parser.ts',  // Path to custom parser
-  }],
+  suites: [
+    {
+      name: 'Custom',
+      type: 'custom',
+      command: 'my-test-runner',
+      resultFile: 'results.json',
+      parser: './parsers/my-parser.ts', // Path to custom parser
+    },
+  ],
 } satisfies Config;
 
 // parsers/my-parser.ts
@@ -152,9 +161,15 @@ Load reporters from file paths:
 import type { Reporter } from 'testfold';
 
 export default class SlackReporter implements Reporter {
-  onStart(suites) { /* notify start */ }
-  onSuiteComplete(suite, result) { /* notify per suite */ }
-  async onComplete(results) { /* send summary */ }
+  onStart(suites) {
+    /* notify start */
+  }
+  onSuiteComplete(suite, result) {
+    /* notify per suite */
+  }
+  async onComplete(results) {
+    /* send summary */
+  }
 }
 ```
 
@@ -194,9 +209,10 @@ testfold unit -- user-service      # Resolves to tests/unit/user-service.test.ts
 ```
 
 Configure the search directory:
+
 ```typescript
 export default {
-  testsDir: './tests',  // Default: './tests'
+  testsDir: './tests', // Default: './tests'
   // ...
 } satisfies Config;
 ```
@@ -212,6 +228,7 @@ Running a single suite only cleans that suite's artifacts, preserving results fr
 ### Agent-Friendly Output
 
 When tests fail, the console reporter outputs:
+
 - **Consolidated failures** — all failing tests across suites in one section
 - **Re-run instructions** — exact CLI commands to re-run just the failed tests
 - **Agent instructions block** — structured `=== AGENT INSTRUCTIONS ===` section with error patterns and suggested actions
@@ -223,6 +240,28 @@ Semantic exit codes: `0` = pass, `1` = test failures, `2` = infrastructure error
 
 Use `--dry-run` to preview resolved commands without execution.
 
+## Development and releases
+
+Use Node.js 22.18.0 or newer. Install the locked dependencies and run the complete local gate:
+
+```bash
+npm ci --no-audit --no-fund
+npm run verify
+```
+
+`npm run verify` checks types, lint, unit and integration behavior, GitHub workflow contracts, and the exact npm candidate in an isolated consumer. Publishing is performed from an accepted GitHub Release asset through npm trusted publishing; it does not require an `NPM_TOKEN` repository secret.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development expectations and [docs/RELEASE.md](docs/RELEASE.md) for the release procedure.
+
 ## Docs
 
 - [Architecture](docs/ARCHITECTURE.md)
+- [Development](docs/DEVELOPMENT.md)
+- [Testing](docs/TESTING.md)
+- [Release runbook](docs/RELEASE.md)
+- [Changelog](CHANGELOG.md)
+- [Security policy](SECURITY.md)
+
+## License
+
+[MIT](LICENSE)

@@ -6,7 +6,7 @@ npm-модуль для унифицированного запуска тест
 
 ## Tech Stack
 
-- **Runtime:** Node.js 20+
+- **Runtime:** Node.js 22.18.0+
 - **Language:** TypeScript (strict mode)
 - **Package Manager:** npm
 - **Testing:** Jest

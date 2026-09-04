@@ -7,6 +7,9 @@ dist/
 # Test results
 test-results/
 .test-results-*.json
+/summary.json
+/tests/fixtures/summary.json
+/tests/integration-npm/
 *.log
 
 # Environment
