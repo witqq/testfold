@@ -24,7 +24,7 @@ assert(ci.permissions.contents === 'read', 'CI has read-only repository permissi
 const testJob = requireRecord(ci.jobs?.test, 'CI test job');
 assert(testJob['runs-on'] === 'ubuntu-24.04', 'CI test job uses a GitHub-hosted runner');
 assert(
-  JSON.stringify(testJob.strategy?.matrix?.node) === JSON.stringify(['20.x', '22.x', '24.x']),
+  JSON.stringify(testJob.strategy?.matrix?.node) === JSON.stringify(['22.x', '24.x']),
   'CI covers every supported Node.js major',
 );
 assertStepUses(testJob, checkout);

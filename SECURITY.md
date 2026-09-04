@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are made on the latest `0.3.x` release line. Upgrade to the current npm `latest` version before reporting behavior that may already be fixed.
+Security fixes are made on the latest `0.4.x` release line. Upgrade to the current npm `latest` version before reporting behavior that may already be fixed.
 
 ## Private reporting
 

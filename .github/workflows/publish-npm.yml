@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Annotated release tag, for example v0.3.3
+        description: Annotated release tag, for example v0.4.0
         required: true
         type: string
       sha256:

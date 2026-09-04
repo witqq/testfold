@@ -82,7 +82,7 @@ const manifest = JSON.parse(await readFile(path.join(packageRoot, 'package.json'
 assert(manifest.name === 'testfold', 'candidate package name is testfold');
 assert(manifest.version === version, 'candidate version matches source package');
 assert(manifest.license === 'MIT', 'candidate license metadata is MIT');
-assert(manifest.engines?.node === '>=20.0.0', 'candidate preserves the Node.js contract');
+assert(manifest.engines?.node === '>=22.18.0', 'candidate preserves the Node.js contract');
 assert(manifest.publishConfig?.access === 'public', 'candidate is explicitly public');
 assert(
   manifest.repository?.url === 'git+https://github.com/witqq/testfold.git',

@@ -4,9 +4,10 @@ Notable changes to Testfold are documented here. The project follows Semantic Ve
 
 ## Unreleased
 
-## 0.3.3 — 2026-09-04
+## 0.4.0 — 2026-09-04
 
 - Add continuous integration, verified npm release candidates, trusted publishing through GitHub Actions, and public repository maintenance documents.
+- Require Node.js 22.18.0 or newer so documented TypeScript configuration files load consistently on every supported runtime.
 
 ## 0.3.2 — 2026-09-04
 
