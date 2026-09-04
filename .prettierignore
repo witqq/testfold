@@ -2,4 +2,7 @@ dist/
 node_modules/
 test-results/
 claude-temp-files/
+moira-ws/
+summary.json
+tests/fixtures/summary.json
 *.log

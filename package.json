@@ -1,6 +1,6 @@
 {
   "name": "testfold",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Unified test runner with Jest and Playwright support, parallel execution, and detailed failure reporting",
   "type": "module",
   "main": "./dist/index.js",
@@ -15,7 +15,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "scripts": {
     "dev": "tsx watch src/cli/index.ts",
@@ -23,10 +24,14 @@
     "test": "node tests/scripts/run-all-tests.js",
     "test:unit": "node tests/scripts/run-unit-tests.js",
     "test:integration": "node tests/scripts/run-integration-tests.js",
-    "lint": "eslint src tests",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests scripts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepublishOnly": "npm run build"
+    "check:workflows": "node scripts/check-workflows.mjs",
+    "pack:check": "npm run build && node scripts/check-package.mjs",
+    "verify": "npm run build && npm run lint && npm test && npm run test:integration && npm run check:workflows && node scripts/check-package.mjs",
+    "prepack": "npm run build"
   },
   "keywords": [
     "test",
@@ -47,6 +52,9 @@
   "bugs": {
     "url": "https://github.com/witqq/testfold/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=20.0.0"
   },
@@ -64,6 +72,7 @@
     "ts-jest": "^29.2.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
-    "typescript-eslint": "^8.15.0"
+    "typescript-eslint": "^8.15.0",
+    "yaml": "2.9.0"
   }
 }
