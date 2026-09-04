@@ -20,6 +20,10 @@ import { loadCustomReporter, isReporterPath } from '../reporters/custom.js';
 import { cleanSuiteArtifacts, type SuiteArtifacts } from '../utils/files.js';
 
 export interface RunOptions {
+  /** Override config.parallel for this run. */
+  parallel?: boolean;
+  /** Override config.failFast for this run. */
+  failFast?: boolean;
   /** Environment name (e.g., 'staging', 'prod') */
   env?: string;
   /** Config file path */
@@ -110,8 +114,13 @@ export class TestRunner {
     const reporters = await this.createReporters(artifactsDir, reporterNames, cwd);
 
     // Create and run orchestrator
+    const effectiveConfig: ValidatedConfig = {
+      ...this.config,
+      ...(options.parallel !== undefined ? { parallel: options.parallel } : {}),
+      ...(options.failFast !== undefined ? { failFast: options.failFast } : {}),
+    };
     const orchestrator = new Orchestrator({
-      config: this.config,
+      config: effectiveConfig,
       reporters,
       environment: options.env,
       cwd,
