@@ -53,6 +53,8 @@ async function main(): Promise<void> {
       grep: args.grep,
       grepInvert: args.grepInvert,
       file: args.file,
+      parallel: args.parallelOverride,
+      failFast: args.failFast ? true : undefined,
     });
 
     // Exit with semantic exit code
@@ -114,7 +116,7 @@ function printDryRun(
     console.log();
   }
 
-  console.log(`Parallel: ${config.parallel !== false}`);
+  console.log(`Parallel: ${args.parallelOverride ?? (config.parallel !== false)}`);
   console.log(`Artifacts: ${config.artifactsDir}`);
 }
 

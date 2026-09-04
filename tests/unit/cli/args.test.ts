@@ -24,12 +24,21 @@ describe('parseArgs', () => {
       const args = parseArgs([]);
 
       expect(args.parallel).toBe(true);
+      expect(args.parallelOverride).toBeUndefined();
     });
 
     it('should handle --no-parallel', () => {
       const args = parseArgs(['--no-parallel']);
 
       expect(args.parallel).toBe(false);
+      expect(args.parallelOverride).toBe(false);
+    });
+
+    it('should expose an explicit --parallel override', () => {
+      const args = parseArgs(['--parallel']);
+
+      expect(args.parallel).toBe(true);
+      expect(args.parallelOverride).toBe(true);
     });
   });
 

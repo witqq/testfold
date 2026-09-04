@@ -1,7 +1,9 @@
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { mkdir, rm, writeFile, readFile } from 'node:fs/promises';
+import { jest } from '@jest/globals';
 import { TestRunner } from '../../../src/core/runner.js';
+import { Orchestrator } from '../../../src/core/orchestrator.js';
 import type { Config } from '../../../src/config/types.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -138,6 +140,34 @@ describe('TestRunner', () => {
 
       expect(results.success).toBe(true);
       expect(results.totals.passed).toBe(5);
+    });
+  });
+
+  describe('CLI execution policy overrides', () => {
+    it('applies explicit parallel and fail-fast overrides without mutating the runner config', async () => {
+      const config: Config = {
+        suites: [{ name: 'test-suite', type: 'jest', command: 'unused', resultFile: 'unused.json' }],
+        artifactsDir: tempDir,
+        parallel: true,
+        failFast: false,
+        reporters: [],
+      };
+      const runner = new TestRunner(config, __dirname);
+      let observed: { parallel: boolean; failFast: boolean } | undefined;
+      const run = jest.spyOn(Orchestrator.prototype, 'run').mockImplementation(async function () {
+        observed = (this as unknown as { config: { parallel: boolean; failFast: boolean } }).config;
+        return {} as never;
+      });
+      try {
+        await runner.run(undefined, { parallel: false, failFast: true });
+        expect(observed).toEqual(expect.objectContaining({ parallel: false, failFast: true }));
+
+        observed = undefined;
+        await runner.run();
+        expect(observed).toEqual(expect.objectContaining({ parallel: true, failFast: false }));
+      } finally {
+        run.mockRestore();
+      }
     });
   });
 });

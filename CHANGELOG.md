@@ -4,6 +4,10 @@ Notable changes to Testfold are documented here. The project follows Semantic Ve
 
 ## Unreleased
 
+## 0.4.1 — 2026-09-04
+
+- Make the CLI `--no-parallel`, `--parallel`, and `--fail-fast` flags override execution policy for the current run while preserving config defaults when no override is supplied.
+
 ## 0.4.0 — 2026-09-04
 
 - Add continuous integration, verified npm release candidates, trusted publishing through GitHub Actions, and public repository maintenance documents.

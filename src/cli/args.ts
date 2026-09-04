@@ -9,6 +9,8 @@ export interface ParsedArgs {
   config?: string;
   env?: string;
   parallel: boolean;
+  /** Explicit CLI override; undefined preserves config.parallel. */
+  parallelOverride?: boolean;
   failFast: boolean;
   help: boolean;
   version: boolean;
@@ -55,6 +57,9 @@ export function parseArgs(argv: string[]): ParsedArgs {
     config: args.config,
     env: args.env,
     parallel: args.parallel && !args['no-parallel'],
+    parallelOverride: cliArgs.includes('--no-parallel')
+      ? false
+      : cliArgs.includes('--parallel') ? true : undefined,
     failFast: args['fail-fast'] ?? false,
     help: args.help ?? false,
     version: args.version ?? false,
