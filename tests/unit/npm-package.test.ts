@@ -1,22 +1,39 @@
 /**
- * Integration test: verify testfold package from npm registry
- * Installs package in subproject and verifies it works
+ * Integration test: package the current Testfold source, install the tarball in
+ * an isolated subproject, and verify its public runtime contract.
  */
 
-import { execSync } from 'child_process';
-import { existsSync } from 'fs';
-import { dirname, join } from 'path';
+import { execFileSync, execSync } from 'child_process';
+import { existsSync, readFileSync, rmSync } from 'fs';
+import { dirname, join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const npmTestDir = join(__dirname, '..', 'integration-npm');
+const projectRoot = resolve(__dirname, '..', '..');
+const packageVersion = JSON.parse(
+  readFileSync(join(projectRoot, 'package.json'), 'utf-8'),
+).version as string;
+const tarballPath = join(npmTestDir, `testfold-${packageVersion}.tgz`);
 
 describe('npm package integration', () => {
   beforeAll(() => {
-    // Install testfold from npm registry
-    execSync('npm install --silent', { cwd: npmTestDir, stdio: 'pipe' });
+    execFileSync(
+      'npm',
+      ['pack', '--silent', '--pack-destination', npmTestDir],
+      { cwd: projectRoot, stdio: 'pipe' },
+    );
+    execFileSync(
+      'npm',
+      ['install', '--silent', '--no-audit', '--no-fund', '--no-save', '--package-lock=false', tarballPath],
+      { cwd: npmTestDir, stdio: 'pipe' },
+    );
   }, 60000);
+
+  afterAll(() => {
+    rmSync(tarballPath, { force: true });
+  });
 
   describe('ESM imports', () => {
     it('should import TestRunner', async () => {
@@ -88,7 +105,7 @@ describe('npm package integration', () => {
         encoding: 'utf-8',
       });
       expect(result).toContain('testfold');
-      expect(result).toContain('0.1.0');
+      expect(result).toContain(packageVersion);
     });
 
     it('should output help with --help', () => {

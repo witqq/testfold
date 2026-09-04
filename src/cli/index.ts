@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from './args.js';
 import { TestRunner } from '../core/runner.js';
 import { loadConfig } from '../config/loader.js';
-import { buildFilterArgs, buildWorkersArg } from '../core/executor.js';
+import { appendShellArgs, buildFilterArgs, buildWorkersArg } from '../core/executor.js';
 
 function getVersion(): string {
   const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -94,12 +94,11 @@ function printDryRun(
       ? buildWorkersArg(suite.type, suite.workers)
       : null;
 
-    const fullCommand = [
-      suite.command,
+    const fullCommand = appendShellArgs(suite.command, [
       ...filterArgs,
       ...(workersArg ? [workersArg] : []),
       ...args.passThrough,
-    ].join(' ');
+    ]);
 
     console.log(`  ${suite.name} (${suite.type}):`);
     console.log(`    $ ${fullCommand}`);

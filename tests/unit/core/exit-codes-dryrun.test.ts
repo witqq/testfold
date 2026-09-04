@@ -241,6 +241,14 @@ describe('--dry-run CLI output', () => {
     expect(output).toContain('first.test.ts second.test.ts');
     expect(output).not.toContain('first.test.ts,second.test.ts');
   });
+
+  it('should quote a grep pattern with spaces in the planned command', () => {
+    const output = execSync(
+      'node dist/cli/index.js unit --dry-run --grep "rolls back every durable"',
+      { encoding: 'utf-8', cwd: process.cwd() },
+    );
+    expect(output).toContain("'--testNamePattern=rolls back every durable'");
+  });
 });
 
 describe('Exit code safety fallback', () => {

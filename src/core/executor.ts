@@ -126,6 +126,29 @@ export function buildWorkersArg(
   return null;
 }
 
+/**
+ * Append dynamic arguments without allowing the shell to split or expand them.
+ * The configured command remains a shell command so existing pipes, redirects,
+ * and quoted expressions continue to work.
+ */
+export function appendShellArgs(
+  command: string,
+  args: string[],
+  platform: NodeJS.Platform = process.platform,
+): string {
+  return [command, ...args.map((arg) => quoteShellArg(arg, platform))]
+    .filter(Boolean)
+    .join(' ');
+}
+
+function quoteShellArg(value: string, platform: NodeJS.Platform): string {
+  if (/^[a-zA-Z0-9_./:=@+,-]+$/.test(value)) return value;
+  if (platform === 'win32') {
+    return `"${value.replace(/(["^&|<>])/g, '^$1')}"`;
+  }
+  return `'${value.replace(/'/g, `'"'"'`)}'`;
+}
+
 export async function executeCommand(
   suite: Suite,
   options: ExecuteOptions,
@@ -134,7 +157,6 @@ export async function executeCommand(
 
   return new Promise((resolve) => {
     // Build command with filter and pass-through arguments
-    const commandParts = suite.command.split(' ');
     const filterArgs = buildFilterArgs(suite.type, options);
     const passThrough = options.passThrough ?? [];
 
@@ -147,15 +169,13 @@ export async function executeCommand(
       ? buildWorkersArg(suite.type, suite.workers)
       : null;
 
-    const fullCommand = [
-      ...commandParts,
+    const appendedArgs = [
       ...filterArgs,
       ...(workersArg ? [workersArg] : []),
       ...resolvedPassThrough,
     ];
-
-    const [cmd, ...args] = fullCommand;
-    if (!cmd) {
+    const actualCommand = appendShellArgs(suite.command.trim(), appendedArgs);
+    if (!actualCommand) {
       resolve({
         exitCode: 1,
         stdout: '',
@@ -167,7 +187,7 @@ export async function executeCommand(
 
     // detached: true creates a new process group (POSIX only).
     // On Windows, process group killing is a no-op (caught by try/catch in killProcessGroup).
-    const proc = spawn(cmd, args, {
+    const proc = spawn(actualCommand, {
       cwd: options.cwd,
       shell: true,
       detached: true,
@@ -242,7 +262,6 @@ export async function executeCommand(
 
       // Write log file
       await mkdir(dirname(options.logFile), { recursive: true });
-      const actualCommand = fullCommand.join(' ');
       const logContent = [
         `Command: ${actualCommand}`,
         `Exit Code: ${code}`,
