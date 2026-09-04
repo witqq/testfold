@@ -71,41 +71,7 @@ export class PlaywrightParser implements Parser {
             skipped: 0,
             duration: 0,
             success: false,
-            failures: [
-              {
-                testName: 'Framework Crash',
-                filePath: '',
-                error: this.extractErrorSnippet(log),
-              },
-            ],
-          };
-        }
-      }
-
-      return {
-        passed: 0,
-        failed: 0,
-        skipped: 0,
-        duration: 0,
-        success: true,
-        failures: [],
-      };
-    }
-
-    let data: PlaywrightResult;
-    try {
-      data = JSON.parse(content) as PlaywrightResult;
-    } catch {
-      // Corrupted/truncated JSON — try crash detection from log
-      if (logPath && existsSync(logPath)) {
-        const log = await readFile(logPath, 'utf-8');
-        if (this.detectFrameworkCrash(log)) {
-          return {
-            passed: 0,
-            failed: 1,
-            skipped: 0,
-            duration: 0,
-            success: false,
+            errorCategory: 'infra_error',
             failures: [
               {
                 testName: 'Framework Crash',
@@ -123,6 +89,50 @@ export class PlaywrightParser implements Parser {
         skipped: 0,
         duration: 0,
         success: false,
+        errorCategory: 'infra_error',
+        failures: [
+          {
+            testName: 'Missing Result File',
+            filePath: jsonPath,
+            error: 'The test framework did not create its configured JSON result file',
+          },
+        ],
+      };
+    }
+
+    let data: PlaywrightResult;
+    try {
+      data = JSON.parse(content) as PlaywrightResult;
+    } catch {
+      // Corrupted/truncated JSON — try crash detection from log
+      if (logPath && existsSync(logPath)) {
+        const log = await readFile(logPath, 'utf-8');
+        if (this.detectFrameworkCrash(log)) {
+          return {
+            passed: 0,
+            failed: 1,
+            skipped: 0,
+            duration: 0,
+            success: false,
+            errorCategory: 'infra_error',
+            failures: [
+              {
+                testName: 'Framework Crash',
+                filePath: '',
+                error: this.extractErrorSnippet(log),
+              },
+            ],
+          };
+        }
+      }
+
+      return {
+        passed: 0,
+        failed: 1,
+        skipped: 0,
+        duration: 0,
+        success: false,
+        errorCategory: 'infra_error',
         failures: [
           {
             testName: 'Result Parse Error',

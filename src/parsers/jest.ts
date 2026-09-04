@@ -47,6 +47,7 @@ export class JestParser implements Parser {
             skipped: 0,
             duration: 0,
             success: false,
+            errorCategory: 'infra_error',
             failures: [
               {
                 testName: 'Framework Crash',
@@ -60,11 +61,18 @@ export class JestParser implements Parser {
 
       return {
         passed: 0,
-        failed: 0,
+        failed: 1,
         skipped: 0,
         duration: 0,
-        success: true,
-        failures: [],
+        success: false,
+        errorCategory: 'infra_error',
+        failures: [
+          {
+            testName: 'Missing Result File',
+            filePath: jsonPath,
+            error: 'The test framework did not create its configured JSON result file',
+          },
+        ],
       };
     }
 

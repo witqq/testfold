@@ -37,7 +37,7 @@ describe('--dry-run flag', () => {
     const args = parseArgs(['--dry-run', '--grep', 'auth', '--file', 'user.test.ts']);
     expect(args.dryRun).toBe(true);
     expect(args.grep).toBe('auth');
-    expect(args.file).toBe('user.test.ts');
+    expect(args.file).toEqual(['user.test.ts']);
   });
 });
 
@@ -231,6 +231,15 @@ describe('--dry-run CLI output', () => {
       { encoding: 'utf-8', cwd: process.cwd() },
     );
     expect(output).toBeTruthy();
+  });
+
+  it('should render repeated --file values as separate command arguments', () => {
+    const output = execSync(
+      'node dist/cli/index.js unit --dry-run --file first.test.ts --file second.test.ts',
+      { encoding: 'utf-8', cwd: process.cwd() },
+    );
+    expect(output).toContain('first.test.ts second.test.ts');
+    expect(output).not.toContain('first.test.ts,second.test.ts');
   });
 });
 

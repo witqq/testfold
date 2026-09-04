@@ -23,8 +23,8 @@ export interface ExecuteOptions {
   grep?: string;
   /** Grep-invert pattern to exclude tests by name */
   grepInvert?: string;
-  /** Filter by test file path */
-  file?: string;
+  /** Filter by one or more test file paths */
+  file?: string | string[];
   /** Callback for streaming stdout output chunks in real-time */
   onOutput?: (chunk: string) => void;
 }
@@ -104,8 +104,8 @@ export function buildFilterArgs(
   }
 
   if (options.file) {
-    // File filter is appended directly — works for both Jest and Playwright
-    args.push(options.file);
+    // File filters are appended as separate arguments for both Jest and Playwright.
+    args.push(...(Array.isArray(options.file) ? options.file : [options.file]));
   }
 
   return args;

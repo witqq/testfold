@@ -2,7 +2,7 @@
  * Parser Types
  */
 
-import type { FailureDetail, TestResult } from '../config/types.js';
+import type { ErrorCategory, FailureDetail, TestResult } from '../config/types.js';
 
 // Re-export TestResult for backward compatibility
 export type { TestResult };
@@ -14,6 +14,8 @@ export interface ParseResult {
   duration: number;
   success: boolean;
   failures: FailureDetail[];
+  /** Infrastructure failures are distinguished from test assertion failures. */
+  errorCategory?: ErrorCategory;
   /** Raw test results for timing analysis */
   testResults?: TestResult[];
 }

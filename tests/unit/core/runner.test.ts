@@ -8,6 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 describe('TestRunner', () => {
   const tempDir = resolve(__dirname, '../../fixtures/temp-runner');
+  const successFixture = resolve(__dirname, '../../fixtures/jest/success.json');
 
   beforeAll(async () => {
     await mkdir(tempDir, { recursive: true });
@@ -55,7 +56,7 @@ describe('TestRunner', () => {
           {
             name: 'test-suite',
             type: 'jest',
-            command: 'echo "test"',
+            command: `node -e "require('node:fs').copyFileSync('${successFixture}', '${resultFile}')" --`,
             resultFile: 'jest-result.json',
           },
         ],
@@ -120,7 +121,7 @@ describe('TestRunner', () => {
           {
             name: 'test-suite',
             type: 'jest',
-            command: 'echo',
+            command: `node -e "require('node:fs').copyFileSync('${successFixture}', '${resultFile}')" --`,
             resultFile: 'passthrough-result.json',
           },
         ],
@@ -135,8 +136,8 @@ describe('TestRunner', () => {
         cwd: __dirname,
       });
 
-      // Should run successfully with pass-through args
-      expect(results).toBeDefined();
+      expect(results.success).toBe(true);
+      expect(results.totals.passed).toBe(5);
     });
   });
 });

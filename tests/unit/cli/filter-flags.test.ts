@@ -34,17 +34,27 @@ describe('CLI filtering flags', () => {
   describe('parseArgs --file', () => {
     it('should parse --file flag', () => {
       const args = parseArgs(['--file', 'auth.test.ts']);
-      expect(args.file).toBe('auth.test.ts');
+      expect(args.file).toEqual(['auth.test.ts']);
     });
 
     it('should parse -f alias', () => {
       const args = parseArgs(['-f', 'login.test.ts']);
-      expect(args.file).toBe('login.test.ts');
+      expect(args.file).toEqual(['login.test.ts']);
     });
 
     it('should be undefined when not specified', () => {
       const args = parseArgs([]);
-      expect(args.file).toBeUndefined();
+      expect(args.file).toEqual([]);
+    });
+
+    it('should preserve repeated --file flags as separate paths', () => {
+      const args = parseArgs([
+        '--file',
+        'auth.test.ts',
+        '--file',
+        'login.test.ts',
+      ]);
+      expect(args.file).toEqual(['auth.test.ts', 'login.test.ts']);
     });
   });
 
@@ -69,7 +79,7 @@ describe('CLI filtering flags', () => {
       expect(args.suites).toEqual(['unit']);
       expect(args.grep).toBe('auth');
       expect(args.grepInvert).toBe('slow');
-      expect(args.file).toBe('user.test.ts');
+      expect(args.file).toEqual(['user.test.ts']);
     });
 
     it('should not conflict with pass-through args', () => {
@@ -100,6 +110,13 @@ describe('buildFilterArgs', () => {
     it('should append file filter directly', () => {
       const result = buildFilterArgs('jest', { file: 'auth.test.ts' });
       expect(result).toEqual(['auth.test.ts']);
+    });
+
+    it('should append multiple file filters as separate arguments', () => {
+      const result = buildFilterArgs('jest', {
+        file: ['auth.test.ts', 'login.test.ts'],
+      });
+      expect(result).toEqual(['auth.test.ts', 'login.test.ts']);
     });
 
     it('should combine all filters', () => {
