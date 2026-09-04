@@ -74,7 +74,7 @@ describe('executor enhancements', () => {
         resultFile: 'result.json',
         workers: 4,
       };
-      const result = await executeCommand(suite, {
+      await executeCommand(suite, {
         cwd: tempDir,
         logFile: join(tempDir, 'test.log'),
       });
@@ -91,7 +91,7 @@ describe('executor enhancements', () => {
         resultFile: 'result.json',
         workers: 2,
       };
-      const result = await executeCommand(suite, {
+      await executeCommand(suite, {
         cwd: tempDir,
         logFile: join(tempDir, 'test.log'),
       });
@@ -108,7 +108,7 @@ describe('executor enhancements', () => {
         resultFile: 'result.json',
         workers: 3,
       };
-      const result = await executeCommand(suite, {
+      await executeCommand(suite, {
         cwd: tempDir,
         logFile: join(tempDir, 'test.log'),
       });
@@ -120,7 +120,7 @@ describe('executor enhancements', () => {
 
     it('should not append workers flag when not set', async () => {
       const suite = makeSuite('echo test');
-      const result = await executeCommand(suite, {
+      await executeCommand(suite, {
         cwd: tempDir,
         logFile: join(tempDir, 'test.log'),
       });

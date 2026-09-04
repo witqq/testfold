@@ -103,12 +103,14 @@ describe('PlaywrightParser', () => {
   });
 
   describe('handle missing file', () => {
-    it('should return empty success result for missing file', async () => {
+    it('should report an infrastructure failure for missing file', async () => {
       const result = await parser.parse('/nonexistent/path.json');
 
       expect(result.passed).toBe(0);
-      expect(result.failed).toBe(0);
-      expect(result.success).toBe(true);
+      expect(result.failed).toBe(1);
+      expect(result.success).toBe(false);
+      expect(result.errorCategory).toBe('infra_error');
+      expect(result.failures[0]?.testName).toBe('Missing Result File');
     });
   });
 });

@@ -135,7 +135,7 @@ Options:
                           Custom: path to reporter module (e.g., ./my-reporter.ts)
   --grep, -g <pattern>    Filter tests by name pattern
   --grep-invert <pattern> Exclude tests matching pattern
-  --file, -f <path>       Filter by test file
+  --file, -f <path>       Filter by test file (repeat for multiple files)
   --dry-run               Print planned commands without executing
   --no-parallel           Run suites sequentially
   --fail-fast             Stop on first failure

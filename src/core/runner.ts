@@ -34,8 +34,8 @@ export interface RunOptions {
   grep?: string;
   /** Grep-invert pattern to exclude tests by name */
   grepInvert?: string;
-  /** Filter by test file path */
-  file?: string;
+  /** Filter by one or more test file paths */
+  file?: string | string[];
 }
 
 export class TestRunner {

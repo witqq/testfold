@@ -26,6 +26,35 @@ describe('Orchestrator', () => {
   });
 
   describe('graceful error recovery', () => {
+    it('should classify a missing result file as an infrastructure error', async () => {
+      const mockReporter = createNoopReporter();
+      const config: ValidatedConfig = {
+        suites: [
+          {
+            name: 'missing-result-suite',
+            type: 'jest',
+            command: 'echo "completed without a JSON result"',
+            resultFile: 'missing-result.json',
+          },
+        ],
+        artifactsDir: tempDir,
+        parallel: false,
+        failFast: false,
+      };
+      const orchestrator = new Orchestrator({
+        config,
+        reporters: [mockReporter],
+        cwd: __dirname,
+      });
+
+      const results = await orchestrator.run();
+
+      expect(results.success).toBe(false);
+      expect(results.exitCode).toBe(2);
+      expect(results.suites[0]?.errorCategory).toBe('infra_error');
+      expect(results.suites[0]?.failures[0]?.testName).toBe('Missing Result File');
+    });
+
     it('should handle corrupted JSON result file gracefully', async () => {
       // Create a corrupted JSON file
       const resultFile = resolve(tempDir, 'corrupted.json');

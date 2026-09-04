@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-import { writeFile, mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { writeFile, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { PlaywrightParser } from '../../../src/parsers/playwright.js';
 
@@ -101,24 +101,26 @@ describe('PlaywrightParser crash detection', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should return success when no log and no JSON', async () => {
+  it('should report infrastructure failure when no log and no JSON', async () => {
     const jsonPath = resolve(tempDir, 'nonexistent.json');
 
     const result = await parser.parse(jsonPath);
 
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
     expect(result.passed).toBe(0);
-    expect(result.failed).toBe(0);
+    expect(result.failed).toBe(1);
+    expect(result.errorCategory).toBe('infra_error');
   });
 
-  it('should return success when log has no error patterns', async () => {
+  it('should report infrastructure failure when log has no error patterns and JSON is missing', async () => {
     const logPath = resolve(tempDir, 'test.log');
     await writeFile(logPath, 'Running 0 tests using 0 workers\nAll good');
     const jsonPath = resolve(tempDir, 'nonexistent.json');
 
     const result = await parser.parse(jsonPath, logPath);
 
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
+    expect(result.errorCategory).toBe('infra_error');
   });
 
   it('should extract error snippet with context lines', async () => {

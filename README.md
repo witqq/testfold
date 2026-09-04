@@ -72,6 +72,7 @@ testfold -g "auth"                    # Filter tests by name pattern
 testfold --grep "login" unit          # grep maps to --testNamePattern (Jest) or --grep (Playwright)
 testfold --grep-invert "slow"         # Exclude tests matching pattern
 testfold -f auth.test.ts              # Run specific test file
+testfold -f auth.test.ts -f api.test.ts # Run multiple test files
 testfold -- --testNamePattern="auth"  # Pass args to test framework
 testfold -- user                      # Path prefix resolution: "user" -> tests/unit/user.test.ts
 testfold --dry-run                    # Preview commands without executing

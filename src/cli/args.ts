@@ -18,8 +18,8 @@ export interface ParsedArgs {
   grep?: string;
   /** Grep-invert pattern to exclude tests by name */
   grepInvert?: string;
-  /** Filter by test file path */
-  file?: string;
+  /** Filter by one or more test file paths */
+  file: string[];
   /** Print planned commands without executing */
   dryRun: boolean;
   /** Pass-through arguments for test framework (after -- separator) */
@@ -61,10 +61,15 @@ export function parseArgs(argv: string[]): ParsedArgs {
     reporter: parseReporterArg(args.reporter),
     grep: args.grep,
     grepInvert: args['grep-invert'],
-    file: args.file,
+    file: parseStringList(args.file),
     dryRun: args['dry-run'] ?? false,
     passThrough,
   };
+}
+
+function parseStringList(value: string | string[] | undefined): string[] {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
 }
 
 /**

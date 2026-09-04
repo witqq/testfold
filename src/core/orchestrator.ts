@@ -28,8 +28,8 @@ export interface OrchestratorOptions {
   grep?: string;
   /** Grep-invert pattern to exclude tests by name */
   grepInvert?: string;
-  /** Filter by test file path */
-  file?: string;
+  /** Filter by one or more test file paths */
+  file?: string | string[];
 }
 
 export class Orchestrator {
@@ -41,7 +41,7 @@ export class Orchestrator {
   private envFileVars: Record<string, string>;
   private grep?: string;
   private grepInvert?: string;
-  private file?: string;
+  private file?: string | string[];
 
   constructor(options: OrchestratorOptions) {
     this.config = options.config;
@@ -239,7 +239,9 @@ export class Orchestrator {
     }
 
     // If no category set yet, determine from test results
-    if (errorCategory === 'none' && parseResult.failed > 0) {
+    if (errorCategory === 'none' && parseResult.errorCategory) {
+      errorCategory = parseResult.errorCategory;
+    } else if (errorCategory === 'none' && parseResult.failed > 0) {
       errorCategory = 'test_failure';
     }
 
