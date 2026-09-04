@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "dev": "tsx watch src/cli/index.ts",
-    "build": "tsc",
+    "build": "tsc && node scripts/ensure-cli-executable.mjs",
     "test": "node tests/scripts/run-all-tests.js",
     "test:unit": "node tests/scripts/run-unit-tests.js",
     "test:integration": "node tests/scripts/run-integration-tests.js",
