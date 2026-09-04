@@ -18,6 +18,45 @@ describe('executeCommand', () => {
   });
 
   describe('pass-through arguments', () => {
+    it('should preserve a grep pattern with spaces as one framework argument', async () => {
+      const suite: Suite = {
+        name: 'test-suite',
+        type: 'jest',
+        command: `node -e "console.log(JSON.stringify(process.argv.slice(1)))" --`,
+        resultFile: 'result.json',
+      };
+
+      const result = await executeCommand(suite, {
+        cwd: __dirname,
+        logFile: resolve(tempDir, 'grep-spaces.log'),
+        grep: 'rolls back every durable',
+      });
+
+      expect(result.exitCode).toBe(0);
+      expect(JSON.parse(result.stdout.trim())).toEqual([
+        '--testNamePattern=rolls back every durable',
+      ]);
+    });
+
+    it('should preserve a pass-through argument containing shell metacharacters', async () => {
+      const suite: Suite = {
+        name: 'test-suite',
+        type: 'jest',
+        command: `node -e "console.log(JSON.stringify(process.argv.slice(1)))" --`,
+        resultFile: 'result.json',
+      };
+      const dangerous = 'literal $HOME; echo not-executed';
+
+      const result = await executeCommand(suite, {
+        cwd: __dirname,
+        logFile: resolve(tempDir, 'shell-literal.log'),
+        passThrough: [dangerous],
+      });
+
+      expect(result.exitCode).toBe(0);
+      expect(JSON.parse(result.stdout.trim())).toEqual([dangerous]);
+    });
+
     it('should append pass-through arguments to command', async () => {
       const suite: Suite = {
         name: 'test-suite',
