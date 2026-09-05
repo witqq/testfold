@@ -50,7 +50,7 @@ export class TestRunner {
     // Validate config
     const result = ConfigSchema.safeParse(config);
     if (!result.success) {
-      const errors = result.error.errors
+      const errors = result.error.issues
         .map((e) => `  - ${e.path.join('.')}: ${e.message}`)
         .join('\n');
       throw new Error(`Invalid config:\n${errors}`);
@@ -63,10 +63,7 @@ export class TestRunner {
   /**
    * Create runner from config file
    */
-  static async fromConfigFile(
-    configPath?: string,
-    cwd?: string,
-  ): Promise<TestRunner> {
+  static async fromConfigFile(configPath?: string, cwd?: string): Promise<TestRunner> {
     const config = await loadConfig(configPath);
     return new TestRunner(config, cwd);
   }
@@ -76,10 +73,7 @@ export class TestRunner {
    * @param suiteNames - Optional list of suite names to run
    * @param options - Run options
    */
-  async run(
-    suiteNames?: string[],
-    options: RunOptions = {},
-  ): Promise<AggregatedResults> {
+  async run(suiteNames?: string[], options: RunOptions = {}): Promise<AggregatedResults> {
     const cwd = options.cwd ?? this.cwd;
     const artifactsDir = resolve(cwd, this.config.artifactsDir);
 
@@ -91,13 +85,12 @@ export class TestRunner {
     }
 
     // Determine which suites will run
-    const suitesToRun = suiteNames && suiteNames.length > 0
-      ? this.config.suites.filter(
-          (s) =>
-            suiteNames.includes(s.name) ||
-            suiteNames.includes(s.name.toLowerCase()),
-        )
-      : this.config.suites;
+    const suitesToRun =
+      suiteNames && suiteNames.length > 0
+        ? this.config.suites.filter(
+            (s) => suiteNames.includes(s.name) || suiteNames.includes(s.name.toLowerCase()),
+          )
+        : this.config.suites;
 
     // Clean only artifacts for suites being run (preserves other suites' artifacts)
     const suiteArtifacts: SuiteArtifacts[] = suitesToRun.map((s) => ({
@@ -108,9 +101,8 @@ export class TestRunner {
     await cleanSuiteArtifacts(artifactsDir, suiteArtifacts);
 
     // Create reporters (use override if provided)
-    const reporterNames = options.reporter && options.reporter.length > 0
-      ? options.reporter
-      : this.config.reporters;
+    const reporterNames =
+      options.reporter && options.reporter.length > 0 ? options.reporter : this.config.reporters;
     const reporters = await this.createReporters(artifactsDir, reporterNames, cwd);
 
     // Create and run orchestrator

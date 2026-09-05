@@ -28,14 +28,9 @@ function isParser(obj: unknown): obj is Parser {
  * @returns Parser instance
  * @throws Error if module cannot be loaded or doesn't implement Parser interface
  */
-export async function loadCustomParser(
-  parserPath: string,
-  cwd: string,
-): Promise<Parser> {
+export async function loadCustomParser(parserPath: string, cwd: string): Promise<Parser> {
   // Resolve path
-  const absolutePath = isAbsolute(parserPath)
-    ? parserPath
-    : resolve(cwd, parserPath);
+  const absolutePath = isAbsolute(parserPath) ? parserPath : resolve(cwd, parserPath);
 
   // Convert to file URL for ESM import
   const fileUrl = `file://${absolutePath}`;
@@ -46,6 +41,7 @@ export async function loadCustomParser(
   } catch (error) {
     throw new Error(
       `Failed to load custom parser from ${parserPath}: ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error },
     );
   }
 

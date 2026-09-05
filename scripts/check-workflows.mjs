@@ -29,6 +29,7 @@ assert(
 );
 assertStepUses(testJob, checkout);
 assertStepUses(testJob, setupNode);
+assertStepRun(testJob, 'npm install --global npm@11.19.1');
 assertStepRun(testJob, 'npm ci --no-audit --no-fund');
 assertStepRun(testJob, 'npm run build');
 assertStepRun(testJob, 'npm test');
@@ -38,6 +39,7 @@ const qualityJob = requireRecord(ci.jobs?.quality, 'CI quality job');
 assert(qualityJob.needs === 'test', 'release-quality checks follow runtime tests');
 assertStepUses(qualityJob, checkout);
 assertStepUses(qualityJob, setupNode);
+assertStepRun(qualityJob, 'npm install --global npm@11.19.1');
 assertStepRun(qualityJob, 'npm ci --no-audit --no-fund');
 assertStepRun(qualityJob, 'npm run lint');
 assertStepRun(qualityJob, 'npm run check:workflows');
@@ -67,17 +69,41 @@ const publishRuns = requireSteps(publishJob)
   .join('\n');
 for (const required of [
   'npm install --global npm@11.19.1',
+  'git/ref/tags/${tag}',
+  'release tag must be annotated',
+  'tag commit is not contained in the dispatched revision',
   'releases/tags/${tag}',
   'release.assets.length !== 1',
   'asset.digest !== `sha256:${expectedDigest}`',
   'crypto.createHash("sha256")',
   'manifest.name !== "testfold"',
   'manifest.version !== expectedVersion',
-  'npm publish --access public "${asset_url}"',
+  'manifest.engines?.node !== ">=22.18.0"',
+  'parse_registry_url()',
+  'Array.isArray(parsed) ? parsed : [parsed]',
+  'registry-preflight.tgz',
+  'already contains the accepted bytes; skipping',
+  'npm publish --access public "${tarball}"',
+  'for attempt in {1..24}',
+  'did not become visible in the registry',
+  'sleep 5',
+  'registry-final.tgz',
 ]) {
   assert(publishRuns.includes(required), `publication enforces ${required}`);
 }
-for (const forbidden of ['actions/checkout@', 'NPM_TOKEN', 'NODE_AUTH_TOKEN', 'npm run build']) {
+assert(
+  publishRuns.indexOf('registry-preflight.tgz') <
+    publishRuns.indexOf('npm publish --access public "${tarball}"'),
+  'publication checks an existing registry version before publishing',
+);
+for (const forbidden of [
+  'actions/checkout@',
+  'NPM_TOKEN',
+  'NODE_AUTH_TOKEN',
+  'npm run build',
+  'npm pack',
+  'npm publish --access public "${asset_url}"',
+]) {
   assert(!publishSource.includes(forbidden), `publication excludes ${forbidden}`);
 }
 assertPinnedActions(publish, 'publication workflow');

@@ -8,15 +8,9 @@ import { pathToFileURL } from 'node:url';
 import { ConfigSchema, type ValidatedConfig } from './schema.js';
 import type { Config } from './types.js';
 
-const CONFIG_FILES = [
-  'test-runner.config.ts',
-  'test-runner.config.js',
-  'test-runner.config.mjs',
-];
+const CONFIG_FILES = ['test-runner.config.ts', 'test-runner.config.js', 'test-runner.config.mjs'];
 
-export async function loadConfig(
-  configPath?: string,
-): Promise<ValidatedConfig> {
+export async function loadConfig(configPath?: string): Promise<ValidatedConfig> {
   const cwd = process.cwd();
 
   // If explicit path provided, use it
@@ -36,9 +30,7 @@ export async function loadConfig(
     }
   }
 
-  throw new Error(
-    `No config file found. Create one of: ${CONFIG_FILES.join(', ')}`,
-  );
+  throw new Error(`No config file found. Create one of: ${CONFIG_FILES.join(', ')}`);
 }
 
 async function loadConfigFile(path: string): Promise<ValidatedConfig> {
@@ -55,7 +47,7 @@ async function loadConfigFile(path: string): Promise<ValidatedConfig> {
   // Validate with Zod
   const result = ConfigSchema.safeParse(config);
   if (!result.success) {
-    const errors = result.error.errors
+    const errors = result.error.issues
       .map((e) => `  - ${e.path.join('.')}: ${e.message}`)
       .join('\n');
     throw new Error(`Invalid config:\n${errors}`);

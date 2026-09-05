@@ -42,10 +42,7 @@ const MAX_BUFFER = 50 * 1024 * 1024; // 50MB
  * Resolve path prefixes in pass-through arguments
  * Arguments that look like test file prefixes are resolved to full paths
  */
-function resolvePassThroughPaths(
-  args: string[],
-  testsDir: string,
-): string[] {
+function resolvePassThroughPaths(args: string[], testsDir: string): string[] {
   return args.map((arg) => {
     // Skip flags (starts with -)
     if (arg.startsWith('-')) {
@@ -114,10 +111,7 @@ export function buildFilterArgs(
 /**
  * Build workers flag for the framework
  */
-export function buildWorkersArg(
-  suiteType: Suite['type'],
-  workers: number,
-): string | null {
+export function buildWorkersArg(suiteType: Suite['type'], workers: number): string | null {
   if (suiteType === 'jest') {
     return `--maxWorkers=${workers}`;
   } else if (suiteType === 'playwright') {
@@ -136,9 +130,7 @@ export function appendShellArgs(
   args: string[],
   platform: NodeJS.Platform = process.platform,
 ): string {
-  return [command, ...args.map((arg) => quoteShellArg(arg, platform))]
-    .filter(Boolean)
-    .join(' ');
+  return [command, ...args.map((arg) => quoteShellArg(arg, platform))].filter(Boolean).join(' ');
 }
 
 function quoteShellArg(value: string, platform: NodeJS.Platform): string {
@@ -165,9 +157,7 @@ export async function executeCommand(
     const resolvedPassThrough = resolvePassThroughPaths(passThrough, testsDir);
 
     // Build workers flag if suite has workers config
-    const workersArg = suite.workers
-      ? buildWorkersArg(suite.type, suite.workers)
-      : null;
+    const workersArg = suite.workers ? buildWorkersArg(suite.type, suite.workers) : null;
 
     const appendedArgs = [
       ...filterArgs,
@@ -185,17 +175,20 @@ export async function executeCommand(
       return;
     }
 
+    const childEnv: NodeJS.ProcessEnv = {
+      ...process.env,
+      ...options.env,
+      FORCE_COLOR: '1',
+    };
+    delete childEnv.NO_COLOR;
+
     // detached: true creates a new process group (POSIX only).
     // On Windows, process group killing is a no-op (caught by try/catch in killProcessGroup).
     const proc = spawn(actualCommand, {
       cwd: options.cwd,
       shell: true,
       detached: true,
-      env: {
-        ...process.env,
-        ...options.env,
-        FORCE_COLOR: '1',
-      },
+      env: childEnv,
     });
 
     let stdout = '';
@@ -294,10 +287,7 @@ export async function executeCommand(
       const duration = Date.now() - startTime;
 
       await mkdir(dirname(options.logFile), { recursive: true });
-      await writeFile(
-        options.logFile,
-        `Error: ${error.message}\n\n${stdout}\n${stderr}`,
-      );
+      await writeFile(options.logFile, `Error: ${error.message}\n\n${stdout}\n${stderr}`);
 
       resolve({
         exitCode: 1,

@@ -7,12 +7,8 @@ import { z } from 'zod';
 export const SuiteEnvironmentSchema = z.object({
   baseUrl: z.string().url().optional(),
   envFile: z.string().optional(),
-  env: z.record(z.string()).optional(),
-  urlExtractor: z
-    .function()
-    .args(z.string())
-    .returns(z.string().optional())
-    .optional(),
+  env: z.record(z.string(), z.string()).optional(),
+  urlExtractor: z.function({ input: [z.string()], output: z.string().optional() }).optional(),
 });
 
 export const SuiteSchema = z.object({
@@ -23,21 +19,17 @@ export const SuiteSchema = z.object({
   logFile: z.string().optional(),
   timeout: z.number().positive().optional(),
   workers: z.number().int().positive().optional(),
-  env: z.record(z.string()).optional(),
-  environments: z.record(SuiteEnvironmentSchema).optional(),
+  env: z.record(z.string(), z.string()).optional(),
+  environments: z.record(z.string(), SuiteEnvironmentSchema).optional(),
   parser: z.string().optional(),
 });
 
 export const HooksSchema = z
   .object({
-    beforeAll: z.function().args().returns(z.promise(z.void())).optional(),
-    afterAll: z.function().args(z.any()).returns(z.promise(z.void())).optional(),
-    beforeSuite: z.function().args(z.any()).returns(z.promise(z.any())).optional(),
-    afterSuite: z
-      .function()
-      .args(z.any(), z.any())
-      .returns(z.promise(z.any()))
-      .optional(),
+    beforeAll: z.function({ input: [], output: z.promise(z.void()) }).optional(),
+    afterAll: z.function({ input: [z.any()], output: z.promise(z.void()) }).optional(),
+    beforeSuite: z.function({ input: [z.any()], output: z.promise(z.any()) }).optional(),
+    afterSuite: z.function({ input: [z.any(), z.any()], output: z.promise(z.any()) }).optional(),
   })
   .optional();
 
@@ -48,10 +40,7 @@ export const ConfigSchema = z.object({
   suites: z.array(SuiteSchema).min(1),
   parallel: z.boolean().optional().default(true),
   failFast: z.boolean().optional().default(false),
-  reporters: z
-    .array(z.string())
-    .optional()
-    .default(['console', 'json', 'markdown-failures']),
+  reporters: z.array(z.string()).optional().default(['console', 'json', 'markdown-failures']),
   hooks: HooksSchema,
 });
 

@@ -6,10 +6,7 @@ import { promisify } from 'node:util';
 
 const execFileAsync = promisify(execFile);
 const root = process.cwd();
-const npmExecutable = path.join(
-  path.dirname(process.execPath),
-  process.platform === 'win32' ? 'npm.cmd' : 'npm',
-);
+const npmCli = requireString(process.env.npm_execpath, 'npm_execpath from the invoking npm CLI');
 const sourcePackage = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
 const version = requireString(sourcePackage.version, 'package version');
 const evidenceRoot = path.join(root, 'test-results', 'package');
@@ -18,8 +15,8 @@ const candidateRoot = await mkdtemp(path.join(evidenceRoot, 'candidate-'));
 const packCache = path.join(candidateRoot, '.npm-cache');
 
 const packResult = await execFileAsync(
-  npmExecutable,
-  ['pack', '--json', '--ignore-scripts', '--pack-destination', candidateRoot],
+  process.execPath,
+  [npmCli, 'pack', '--json', '--ignore-scripts', '--pack-destination', candidateRoot],
   { cwd: root, env: npmEnvironment(packCache), maxBuffer: 10 * 1024 * 1024 },
 );
 const packRecords = JSON.parse(packResult.stdout);
@@ -134,8 +131,9 @@ await writeFile(
   `${JSON.stringify({ name: 'testfold-candidate-consumer', private: true, type: 'module' }, null, 2)}\n`,
 );
 await execFileAsync(
-  npmExecutable,
+  process.execPath,
   [
+    npmCli,
     'install',
     '--ignore-scripts',
     '--package-lock=false',

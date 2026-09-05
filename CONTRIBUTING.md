@@ -4,7 +4,7 @@ Testfold accepts focused bug fixes, tests, documentation improvements, and compa
 
 ## Development setup
 
-Use Node.js 22.18.0 or newer and npm 10 or newer:
+Node.js 22.18.0 and newer are supported. Use the repository default Node.js 24.20.0 from `.nvmrc` or `.node-version` and the npm 11.19.1 version declared by `packageManager`:
 
 ```sh
 git clone https://github.com/witqq/testfold.git

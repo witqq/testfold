@@ -242,7 +242,7 @@ Use `--dry-run` to preview resolved commands without execution.
 
 ## Development and releases
 
-Use Node.js 22.18.0 or newer. Install the locked dependencies and run the complete local gate:
+Node.js 22.18.0 and newer are supported. Local development is pinned to Node.js 24.20.0 through `.nvmrc` and `.node-version`, while `packageManager` pins npm 11.19.1. Install the locked dependencies and run the complete local gate:
 
 ```bash
 npm ci --no-audit --no-fund

@@ -15,7 +15,7 @@ const config: Config = {
       name: 'Unit',
       type: 'jest',
       command:
-        'node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js --testPathPattern tests/unit --json --outputFile test-results/unit.json',
+        'node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js --testPathPatterns tests/unit --json --outputFile test-results/unit.json',
       resultFile: 'unit.json',
       timeout: 120000,
     },

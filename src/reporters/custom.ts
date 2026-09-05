@@ -32,9 +32,7 @@ export async function loadCustomReporter(
   cwd: string,
   ...constructorArgs: unknown[]
 ): Promise<Reporter> {
-  const absolutePath = isAbsolute(reporterPath)
-    ? reporterPath
-    : resolve(cwd, reporterPath);
+  const absolutePath = isAbsolute(reporterPath) ? reporterPath : resolve(cwd, reporterPath);
 
   const fileUrl = `file://${absolutePath}`;
 
@@ -44,6 +42,7 @@ export async function loadCustomReporter(
   } catch (error) {
     throw new Error(
       `Failed to load custom reporter from ${reporterPath}: ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error },
     );
   }
 
