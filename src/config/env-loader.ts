@@ -20,10 +20,7 @@ export interface EnvLoadResult {
  * @param cwd - Working directory to resolve paths from
  * @returns Loaded environment variables
  */
-export function loadEnvFile(
-  environment: string,
-  cwd: string,
-): EnvLoadResult {
+export function loadEnvFile(environment: string, cwd: string): EnvLoadResult {
   // Try common env file patterns
   const patterns = [
     `.env.${environment}`,
@@ -35,7 +32,7 @@ export function loadEnvFile(
   for (const pattern of patterns) {
     const envPath = resolve(cwd, pattern);
     if (existsSync(envPath)) {
-      const result = dotenvConfig({ path: envPath });
+      const result = dotenvConfig({ path: envPath, quiet: true });
       if (!result.error && result.parsed) {
         return {
           env: result.parsed,
@@ -55,17 +52,14 @@ export function loadEnvFile(
  * @param cwd - Working directory to resolve relative paths
  * @returns Loaded environment variables
  */
-export function loadEnvFileFromPath(
-  envFilePath: string,
-  cwd: string,
-): EnvLoadResult {
+export function loadEnvFileFromPath(envFilePath: string, cwd: string): EnvLoadResult {
   const absolutePath = resolve(cwd, envFilePath);
 
   if (!existsSync(absolutePath)) {
     return { env: {} };
   }
 
-  const result = dotenvConfig({ path: absolutePath });
+  const result = dotenvConfig({ path: absolutePath, quiet: true });
   if (!result.error && result.parsed) {
     return {
       env: result.parsed,
@@ -82,10 +76,7 @@ export function loadEnvFileFromPath(
  * @param cwd - Working directory
  * @returns File content or empty string
  */
-export function readEnvFileContent(
-  envFilePath: string,
-  cwd: string,
-): string {
+export function readEnvFileContent(envFilePath: string, cwd: string): string {
   const absolutePath = resolve(cwd, envFilePath);
 
   if (!existsSync(absolutePath)) {

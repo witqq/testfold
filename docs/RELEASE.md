@@ -10,7 +10,7 @@ Protect `master` after the CI workflow exists. Require the Node.js matrix and re
 
 ## Prepare the candidate once
 
-Work on a clean feature branch with the release version already set in `package.json` and `package-lock.json`. Update [CHANGELOG.md](../CHANGELOG.md), then run:
+Work on a clean feature branch with the release version already set in `package.json` and `package-lock.json`. Use Node.js 24.20.0 and npm 11.19.1 as pinned by the repository. Update [CHANGELOG.md](../CHANGELOG.md), then run:
 
 ```sh
 npm ci --no-audit --no-fund
@@ -60,9 +60,9 @@ gh run watch "<databaseId>" --exit-status
 npm view testfold dist-tags version --json
 ```
 
-The workflow requires exactly one uploaded release asset named `testfold-VERSION.tgz`, matches GitHub's asset digest to the accepted SHA-256, downloads over verified HTTPS, recomputes SHA-256, verifies package name/version/repository, and publishes the asset URL with npm OIDC. It performs no source checkout or build.
+The workflow requires an annotated tag contained in the dispatched revision and exactly one uploaded release asset named `testfold-VERSION.tgz`. It matches GitHub's asset digest to the accepted SHA-256, downloads over verified HTTPS, recomputes SHA-256, verifies package identity, and publishes that local verified tarball with npm OIDC. It performs no source checkout or build. A retry first accepts an existing npm version only when its registry tarball has the same SHA-256; every successful run polls the registry and verifies the final bytes again.
 
-The release is complete only when the workflow succeeds and npm reports both `latest` and `version` as the released version. Do not publish locally or add an npm token as a fallback.
+The release is complete only when the workflow succeeds, npm reports both `latest` and `version` as the released version, and the registry tarball digest matches the GitHub Release asset. Do not publish locally or add an npm token as a fallback.
 
 ## Failure handling
 

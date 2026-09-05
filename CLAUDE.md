@@ -6,11 +6,11 @@ npm-модуль для унифицированного запуска тест
 
 ## Tech Stack
 
-- **Runtime:** Node.js 22.18.0+
+- **Runtime:** Node.js 22.18.0+; repository default 24.20.0
 - **Language:** TypeScript (strict mode)
-- **Package Manager:** npm
-- **Testing:** Jest
-- **Validation:** Zod
+- **Package Manager:** npm 11.19.1
+- **Testing:** Jest 30
+- **Validation:** Zod 4
 
 ## Источники паттернов
 
@@ -35,7 +35,7 @@ npm-модуль для унифицированного запуска тест
 ### Quick Start
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 

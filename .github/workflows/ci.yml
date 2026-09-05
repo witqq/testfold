@@ -33,6 +33,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           package-manager-cache: false
+      - name: Use the locked npm CLI
+        run: npm install --global npm@11.19.1
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
       - name: Build
@@ -55,6 +57,8 @@ jobs:
         with:
           node-version: 24.20.0
           package-manager-cache: false
+      - name: Use the locked npm CLI
+        run: npm install --global npm@11.19.1
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
       - name: Lint
