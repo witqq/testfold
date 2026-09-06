@@ -36,8 +36,13 @@ export async function loadConfig(configPath?: string): Promise<ValidatedConfig> 
 async function loadConfigFile(path: string): Promise<ValidatedConfig> {
   const fileUrl = pathToFileURL(path).href;
 
-  // Dynamic import for ESM/TS files
-  const module = (await import(fileUrl)) as { default?: Config };
+  // Native Node ESM cannot import .ts files. Use tsx's scoped importer only for
+  // TypeScript configs; JavaScript configs stay on the native import path.
+  const module = (
+    path.endsWith('.ts')
+      ? await (await import('tsx/esm/api')).tsImport(fileUrl, import.meta.url)
+      : await import(fileUrl)
+  ) as { default?: Config };
 
   const config = module.default;
   if (!config) {

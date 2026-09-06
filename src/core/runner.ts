@@ -17,7 +17,7 @@ import { TextReporter } from '../reporters/text.js';
 import { SummaryLogReporter } from '../reporters/summary-log.js';
 import type { Reporter } from '../reporters/types.js';
 import { loadCustomReporter, isReporterPath } from '../reporters/custom.js';
-import { cleanSuiteArtifacts, type SuiteArtifacts } from '../utils/files.js';
+import { acquireArtifactsLock, cleanSuiteArtifacts, type SuiteArtifacts } from '../utils/files.js';
 
 export interface RunOptions {
   /** Override config.parallel for this run. */
@@ -76,54 +76,59 @@ export class TestRunner {
   async run(suiteNames?: string[], options: RunOptions = {}): Promise<AggregatedResults> {
     const cwd = options.cwd ?? this.cwd;
     const artifactsDir = resolve(cwd, this.config.artifactsDir);
+    const releaseArtifactsLock = await acquireArtifactsLock(artifactsDir);
 
-    // Load environment-specific .env file
-    let envFileVars: Record<string, string> = {};
-    if (options.env) {
-      const envResult = loadEnvFile(options.env, cwd);
-      envFileVars = envResult.env;
+    try {
+      // Load environment-specific .env file
+      let envFileVars: Record<string, string> = {};
+      if (options.env) {
+        const envResult = loadEnvFile(options.env, cwd);
+        envFileVars = envResult.env;
+      }
+
+      // Determine which suites will run
+      const suitesToRun =
+        suiteNames && suiteNames.length > 0
+          ? this.config.suites.filter(
+              (s) => suiteNames.includes(s.name) || suiteNames.includes(s.name.toLowerCase()),
+            )
+          : this.config.suites;
+
+      // Clean only artifacts for suites being run (preserves other suites' artifacts)
+      const suiteArtifacts: SuiteArtifacts[] = suitesToRun.map((s) => ({
+        name: s.name,
+        resultFile: s.resultFile,
+        logFile: s.logFile ?? s.resultFile.replace('.json', '.log'),
+      }));
+      await cleanSuiteArtifacts(artifactsDir, suiteArtifacts);
+
+      // Create reporters (use override if provided)
+      const reporterNames =
+        options.reporter && options.reporter.length > 0 ? options.reporter : this.config.reporters;
+      const reporters = await this.createReporters(artifactsDir, reporterNames, cwd);
+
+      // Create and run orchestrator
+      const effectiveConfig: ValidatedConfig = {
+        ...this.config,
+        ...(options.parallel !== undefined ? { parallel: options.parallel } : {}),
+        ...(options.failFast !== undefined ? { failFast: options.failFast } : {}),
+      };
+      const orchestrator = new Orchestrator({
+        config: effectiveConfig,
+        reporters,
+        environment: options.env,
+        cwd,
+        passThrough: options.passThrough,
+        envFileVars,
+        grep: options.grep,
+        grepInvert: options.grepInvert,
+        file: options.file,
+      });
+
+      return await orchestrator.run(suiteNames);
+    } finally {
+      await releaseArtifactsLock();
     }
-
-    // Determine which suites will run
-    const suitesToRun =
-      suiteNames && suiteNames.length > 0
-        ? this.config.suites.filter(
-            (s) => suiteNames.includes(s.name) || suiteNames.includes(s.name.toLowerCase()),
-          )
-        : this.config.suites;
-
-    // Clean only artifacts for suites being run (preserves other suites' artifacts)
-    const suiteArtifacts: SuiteArtifacts[] = suitesToRun.map((s) => ({
-      name: s.name,
-      resultFile: s.resultFile,
-      logFile: s.logFile ?? s.resultFile.replace('.json', '.log'),
-    }));
-    await cleanSuiteArtifacts(artifactsDir, suiteArtifacts);
-
-    // Create reporters (use override if provided)
-    const reporterNames =
-      options.reporter && options.reporter.length > 0 ? options.reporter : this.config.reporters;
-    const reporters = await this.createReporters(artifactsDir, reporterNames, cwd);
-
-    // Create and run orchestrator
-    const effectiveConfig: ValidatedConfig = {
-      ...this.config,
-      ...(options.parallel !== undefined ? { parallel: options.parallel } : {}),
-      ...(options.failFast !== undefined ? { failFast: options.failFast } : {}),
-    };
-    const orchestrator = new Orchestrator({
-      config: effectiveConfig,
-      reporters,
-      environment: options.env,
-      cwd,
-      passThrough: options.passThrough,
-      envFileVars,
-      grep: options.grep,
-      grepInvert: options.grepInvert,
-      file: options.file,
-    });
-
-    return orchestrator.run(suiteNames);
   }
 
   private async createReporters(
