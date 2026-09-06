@@ -85,7 +85,7 @@ assert(
   manifest.repository?.url === 'git+https://github.com/witqq/testfold.git',
   'candidate repository identity is canonical',
 );
-assert(manifest.bin?.testfold === './dist/cli/index.js', 'candidate CLI target is canonical');
+assert(manifest.bin?.testfold === 'dist/cli/index.js', 'candidate CLI target is npm-canonical');
 assert(manifest.exports?.['.']?.import === './dist/index.js', 'candidate ESM export is canonical');
 assert(
   manifest.exports?.['.']?.types === './dist/index.d.ts',
