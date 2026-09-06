@@ -4,7 +4,11 @@
 
 import { join } from 'node:path';
 import { mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
-import { cleanSuiteArtifacts, type SuiteArtifacts } from '../../../src/utils/files.js';
+import {
+  acquireArtifactsLock,
+  cleanSuiteArtifacts,
+  type SuiteArtifacts,
+} from '../../../src/utils/files.js';
 
 describe('cleanSuiteArtifacts', () => {
   const testDir = join(process.cwd(), 'test-cleanup-artifacts');
@@ -149,5 +153,21 @@ describe('cleanSuiteArtifacts', () => {
     // E2E should be preserved
     expect(existsSync(join(testDir, 'e2e.json'))).toBe(true);
     expect(existsSync(join(testDir, 'e2e.log'))).toBe(true);
+  });
+
+  it('serializes independent runs that share one artifacts directory', async () => {
+    const releaseFirst = await acquireArtifactsLock(testDir, { pollIntervalMs: 5 });
+    let secondAcquired = false;
+    const second = acquireArtifactsLock(testDir, { pollIntervalMs: 5 }).then(async (release) => {
+      secondAcquired = true;
+      await release();
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(secondAcquired).toBe(false);
+
+    await releaseFirst();
+    await second;
+    expect(secondAcquired).toBe(true);
   });
 });
