@@ -4,6 +4,10 @@ Notable changes to Testfold are documented here. The project follows Semantic Ve
 
 ## Unreleased
 
+## 0.4.4 — 2026-09-07
+
+- Count Playwright tests that pass on retry as successful tests in suite totals instead of silently omitting flaky outcomes from the summary.
+
 ## 0.4.2 — 2026-09-06
 
 - Update the full dependency tree, including ESLint 10, Jest 30, TypeScript 6, and Zod 4, while preserving the Node.js 22.18.0 runtime contract.

@@ -149,7 +149,11 @@ export class PlaywrightParser implements Parser {
     this.collectResults(data.suites, '', failures, testResults);
 
     return {
-      passed: data.stats.expected,
+      // Playwright reports tests that passed only after a retry under `flaky`,
+      // not `expected`. They are still terminally successful tests and must be
+      // included in the passed/total counts; otherwise summary totals silently
+      // lose executed specs while collectResults correctly marks them passed.
+      passed: data.stats.expected + data.stats.flaky,
       failed: data.stats.unexpected,
       skipped: data.stats.skipped,
       duration: data.stats.duration,
