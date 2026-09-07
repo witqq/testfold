@@ -18,6 +18,17 @@ describe('PlaywrightParser', () => {
       expect(result.success).toBe(true);
     });
 
+    it('counts a test that passes on retry as passed instead of dropping it from totals', async () => {
+      const result = await parser.parse(resolve(fixturesDir, 'flaky.json'));
+
+      expect(result.passed).toBe(2);
+      expect(result.failed).toBe(0);
+      expect(result.skipped).toBe(0);
+      expect(result.success).toBe(true);
+      expect(result.testResults).toHaveLength(2);
+      expect(result.testResults?.every((test) => test.status === 'passed')).toBe(true);
+    });
+
     it('should extract duration from stats', async () => {
       const result = await parser.parse(resolve(fixturesDir, 'success.json'));
 

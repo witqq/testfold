@@ -1,0 +1,39 @@
+{
+  "config": {},
+  "suites": [
+    {
+      "title": "Retry Tests",
+      "file": "tests/e2e/retry.spec.ts",
+      "specs": [
+        {
+          "title": "passes immediately",
+          "ok": true,
+          "tests": [{
+            "title": "passes immediately",
+            "results": [{ "status": "passed", "duration": 10, "attachments": [] }]
+          }]
+        },
+        {
+          "title": "passes on retry",
+          "ok": true,
+          "tests": [{
+            "title": "passes on retry",
+            "results": [
+              { "status": "failed", "duration": 20, "error": { "message": "first attempt" }, "attachments": [] },
+              { "status": "passed", "duration": 15, "attachments": [] }
+            ]
+          }]
+        }
+      ],
+      "suites": []
+    }
+  ],
+  "stats": {
+    "startTime": "2026-09-07T00:00:00.000Z",
+    "duration": 45,
+    "expected": 1,
+    "unexpected": 0,
+    "skipped": 0,
+    "flaky": 1
+  }
+}
