@@ -4,6 +4,10 @@ Notable changes to Testfold are documented here. The project follows Semantic Ve
 
 ## Unreleased
 
+## 0.4.5 — 2026-09-09
+
+- Preserve the actionable Jest root cause from the execution log when a crashed suite emits only the generic `Test suite failed to run` JSON message, and classify the result as an infrastructure error.
+
 ## 0.4.4 — 2026-09-07
 
 - Count Playwright tests that pass on retry as successful tests in suite totals instead of silently omitting flaky outcomes from the summary.

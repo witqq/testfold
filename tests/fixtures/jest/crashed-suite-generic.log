@@ -1,0 +1,5 @@
+Command: jest broken.test.ts
+Exit Code: 1
+=== STDERR ===
+Error: listen EPERM: operation not permitted 0.0.0.0
+    at Server.listen (node:net:2558:7)

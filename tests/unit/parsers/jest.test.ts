@@ -120,5 +120,16 @@ describe('JestParser', () => {
       expect(result.testResults?.length).toBe(3);
       expect(result.testResults?.[0].status).toBe('passed');
     });
+
+    it('should recover the root cause from the execution log when Jest JSON is generic', async () => {
+      const result = await parser.parse(
+        resolve(fixturesDir, 'crashed-suite-generic.json'),
+        resolve(fixturesDir, 'crashed-suite-generic.log'),
+      );
+
+      expect(result.errorCategory).toBe('infra_error');
+      expect(result.failures[0].error).toContain('listen EPERM');
+      expect(result.failures[0].error).not.toBe('  ● Test suite failed to run');
+    });
   });
 });
