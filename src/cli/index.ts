@@ -136,7 +136,9 @@ Options:
                           Custom: path to reporter module (e.g., ./my-reporter.ts)
   --grep, -g <pattern>    Filter tests by name pattern
   --grep-invert <pattern> Exclude tests matching pattern
-  --file, -f <path>       Filter by test file (repeat for multiple files)
+  --file, -f <path>       Filter by test file (repeat for multiple files);
+                          a file matching no test in any selected suite
+                          fails the run with exit code 2
   --dry-run               Print planned commands without executing
   --no-parallel           Run suites sequentially
   --fail-fast             Stop on first failure
@@ -146,7 +148,7 @@ Options:
 Exit Codes:
   0   All tests passed
   1   One or more tests failed
-  2   Infrastructure error (config, parse, spawn failure)
+  2   Infrastructure error (config, parse, spawn failure, unmatched --file)
   3   Suite killed by timeout
 
 Pass-through Arguments:

@@ -199,6 +199,18 @@ export default {
 
 Returning `void` or `undefined` is treated as success (backward compatible).
 
+### File Filters
+
+`--file` (`-f`) values are passed to Jest and Playwright as positional test-path filters, which the frameworks treat as regular expressions searched in each test file's path; Playwright also accepts a `:line` suffix. The frameworks combine several filters as a union, so testfold checks each requested filter after the run:
+
+- A filter must select at least one test file that one of the selected suites ran. A filter that matches a file in any selected suite is satisfied; it does not have to match every suite.
+- Each filter that selected no test file in any selected suite is recorded as an infrastructure failure named `Unmatched File Filter: <filter>`, attached to the first selected suite. The run fails with exit code `2`, even when other filters matched and their tests passed.
+- The check applies only when every selected suite ran and reported the test files it executed. When a suite was skipped by fail-fast, stopped by a `beforeSuite` guard, timed out, produced no result file, or uses a custom parser that reports neither `testFiles` nor a complete `testResults` list, the check is skipped because the filter may belong to that suite; such a run already fails or depends on that suite's own result.
+
+With `--file`, reporters receive each suite's result after all selected suites finish, so a suite is never shown as passed before the check.
+
+Custom parsers can return `testFiles` (the test files the framework ran) in their `ParseResult` to take part in the check.
+
 ### Path Prefix Resolution
 
 Pass partial test file names and testfold resolves them to full paths:

@@ -119,6 +119,8 @@ export interface SuiteResult {
   resultFile: string;
   /** Individual test results for timing analysis */
   testResults?: TestResult[];
+  /** Test files the framework ran, when the parser could determine them */
+  testFiles?: string[];
   /** Error category for semantic exit code determination */
   errorCategory?: ErrorCategory;
 }

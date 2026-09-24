@@ -65,7 +65,7 @@ testfold -r console,json,timing-text  # Multiple reporters
 testfold -r ./my-reporter.ts          # Custom reporter from file
 testfold -g "auth"                    # Filter by test name
 testfold --grep-invert "slow"         # Exclude tests by pattern
-testfold -f auth.test.ts              # Filter by file
+testfold -f auth.test.ts              # Filter by file (a filter matching no test in any selected suite fails the run, exit 2)
 testfold --dry-run                    # Preview commands without running
 testfold --dry-run unit               # Preview only unit suite
 
