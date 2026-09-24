@@ -4,11 +4,12 @@
 
 import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { isAbsolute, resolve } from 'node:path';
 import type { Parser, ParseResult, TestResult } from './types.js';
 import type { FailureDetail } from '../config/types.js';
 
 interface PlaywrightResult {
-  config: unknown;
+  config?: { rootDir?: string };
   suites: PlaywrightSuite[];
   stats: {
     startTime: string;
@@ -160,7 +161,26 @@ export class PlaywrightParser implements Parser {
       success: data.stats.unexpected === 0,
       failures,
       testResults,
+      testFiles: this.collectTestFiles(data.suites, data.config?.rootDir),
     };
+  }
+
+  /**
+   * Playwright reports spec files relative to its rootDir. Resolve them so they
+   * can be compared with the paths requested through `--file`.
+   */
+  private collectTestFiles(suites: PlaywrightSuite[], rootDir?: string): string[] {
+    const files = new Set<string>();
+    const visit = (items: PlaywrightSuite[]) => {
+      for (const suite of items) {
+        if (suite.file) {
+          files.add(rootDir && !isAbsolute(suite.file) ? resolve(rootDir, suite.file) : suite.file);
+        }
+        if (suite.suites) visit(suite.suites);
+      }
+    };
+    visit(suites);
+    return [...files];
   }
 
   private collectResults(

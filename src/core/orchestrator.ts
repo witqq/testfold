@@ -14,6 +14,7 @@ import { CustomParserLoader } from '../parsers/custom.js';
 import { executeCommand } from './executor.js';
 import { readEnvFileContent } from '../config/env-loader.js';
 import { createProgressCallback } from '../utils/progress.js';
+import { findUnmatchedFileFilters, normalizeFileFilters } from '../utils/file-filters.js';
 
 export interface OrchestratorOptions {
   config: ValidatedConfig;
@@ -83,10 +84,26 @@ export class Orchestrator {
       await this.config.hooks.beforeAll();
     }
 
+    // With --file filters, suite results are reported only after every suite has
+    // finished, because an unmatched filter can be judged only across all of them.
+    const fileFilters = normalizeFileFilters(this.file);
+    const notifyPerSuite = fileFilters.length === 0;
+
     // Execute suites
     const results = this.config.parallel
-      ? await this.runParallel(suitesToRun)
-      : await this.runSequential(suitesToRun);
+      ? await this.runParallel(suitesToRun, notifyPerSuite)
+      : await this.runSequential(suitesToRun, notifyPerSuite);
+
+    if (!notifyPerSuite) {
+      this.applyFileFilterCoverage(fileFilters, suitesToRun, results);
+      results.forEach((result, index) => {
+        const suite = suitesToRun[index];
+        if (!suite) return;
+        for (const reporter of this.reporters) {
+          reporter.onSuiteComplete(suite, result);
+        }
+      });
+    }
 
     // Aggregate results
     const aggregated = this.aggregate(results);
@@ -104,16 +121,57 @@ export class Orchestrator {
     return aggregated;
   }
 
-  private async runParallel(suites: Suite[]): Promise<SuiteResult[]> {
-    const promises = suites.map((suite) => this.runSuite(suite));
+  /**
+   * Fail the run when a requested --file filter selected no test file in any
+   * selected suite. Frameworks combine positional filters as a union, so without
+   * this check a mistyped path is silently dropped while other paths pass.
+   *
+   * The check applies only when every selected suite ran and reported the test
+   * files it executed. Otherwise the run already fails for that suite's own
+   * reason, and an unmatched filter could belong to the suite whose files are
+   * unknown. Unmatched filters are recorded as infrastructure failures on the
+   * first selected suite and name every suite that was searched.
+   */
+  private applyFileFilterCoverage(
+    filters: string[],
+    suites: Suite[],
+    results: SuiteResult[],
+  ): void {
+    const target = results[0];
+    if (!target || results.length < suites.length) return;
+
+    const unmatched = findUnmatchedFileFilters(
+      filters,
+      results.map((result) => result.testFiles),
+      this.cwd,
+    );
+    if (!unmatched || unmatched.length === 0) return;
+
+    const searched = suites.map((suite) => suite.name).join(', ');
+    for (const filter of unmatched) {
+      target.failures.push({
+        testName: `Unmatched File Filter: ${filter}`,
+        filePath: '',
+        error: `--file ${filter} matched no test file in the selected suites (${searched}). No test from this path ran.`,
+      });
+      target.failed += 1;
+    }
+    target.success = false;
+    if (target.errorCategory !== 'timeout') {
+      target.errorCategory = 'infra_error';
+    }
+  }
+
+  private async runParallel(suites: Suite[], notify: boolean): Promise<SuiteResult[]> {
+    const promises = suites.map((suite) => this.runSuite(suite, notify));
     return Promise.all(promises);
   }
 
-  private async runSequential(suites: Suite[]): Promise<SuiteResult[]> {
+  private async runSequential(suites: Suite[], notify: boolean): Promise<SuiteResult[]> {
     const results: SuiteResult[] = [];
 
     for (const suite of suites) {
-      const result = await this.runSuite(suite);
+      const result = await this.runSuite(suite, notify);
       results.push(result);
 
       if (this.config.failFast && !result.success) {
@@ -124,7 +182,7 @@ export class Orchestrator {
     return results;
   }
 
-  private async runSuite(suite: Suite): Promise<SuiteResult> {
+  private async runSuite(suite: Suite, notify: boolean): Promise<SuiteResult> {
     // Run before hook and check guard result
     if (this.config.hooks?.beforeSuite) {
       const guardResult = await this.config.hooks.beforeSuite(suite);
@@ -142,8 +200,10 @@ export class Orchestrator {
           resultFile: '',
           errorCategory: 'infra_error',
         };
-        for (const reporter of this.reporters) {
-          reporter.onSuiteComplete(suite, result);
+        if (notify) {
+          for (const reporter of this.reporters) {
+            reporter.onSuiteComplete(suite, result);
+          }
         }
         return result;
       }
@@ -258,6 +318,7 @@ export class Orchestrator {
       logFile,
       resultFile,
       testResults: parseResult.testResults,
+      testFiles: errorCategory === 'timeout' ? undefined : this.getTestFiles(parseResult),
       errorCategory,
     };
 
@@ -276,11 +337,26 @@ export class Orchestrator {
     }
 
     // Notify reporters (after guard check so reporters see final state)
-    for (const reporter of this.reporters) {
-      reporter.onSuiteComplete(suite, result);
+    if (notify) {
+      for (const reporter of this.reporters) {
+        reporter.onSuiteComplete(suite, result);
+      }
     }
 
     return result;
+  }
+
+  /**
+   * Test files the suite ran. Parsers that do not report them (custom parsers)
+   * fall back to the files of their test results, but only when those results
+   * account for every counted test; a partial list cannot prove a filter missed.
+   */
+  private getTestFiles(parseResult: ParseResult): string[] | undefined {
+    if (parseResult.testFiles) return parseResult.testFiles;
+    const tests = parseResult.testResults;
+    const counted = parseResult.passed + parseResult.failed + parseResult.skipped;
+    if (!tests || tests.length !== counted) return undefined;
+    return [...new Set(tests.map((test) => test.file))];
   }
 
   private getParser(suite: Suite) {

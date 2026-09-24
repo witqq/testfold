@@ -134,6 +134,7 @@ export class JestParser implements Parser {
       success: data.success && crashedSuites === 0,
       failures,
       testResults,
+      testFiles: data.testResults.map((fileResult) => fileResult.name),
     };
   }
 

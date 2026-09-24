@@ -4,6 +4,10 @@ Notable changes to Testfold are documented here. The project follows Semantic Ve
 
 ## Unreleased
 
+## 0.4.5 — 2026-09-24
+
+- Fail the run with exit code 2 and name each `--file` filter that selected no test file in any selected suite, instead of silently dropping it when another filter matched. A filter that matches a file in another selected suite is not an error.
+
 ## 0.4.4 — 2026-09-07
 
 - Count Playwright tests that pass on retry as successful tests in suite totals instead of silently omitting flaky outcomes from the summary.

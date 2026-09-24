@@ -36,7 +36,7 @@ testfold is a unified test runner that orchestrates multiple test frameworks (Je
 ### Core Layer (`src/core/`)
 
 - **runner.ts** - `TestRunner` class, main entry point. Creates reporters (built-in + custom from file paths)
-- **orchestrator.ts** - Coordinates suite execution (parallel/sequential), guard-aware hooks, filter flag passing
+- **orchestrator.ts** - Coordinates suite execution (parallel/sequential), guard-aware hooks, filter flag passing, and `--file` coverage: a requested file that selected no test in any selected suite fails the run with exit code 2
 - **executor.ts** - Spawns child processes with `detached: true`, captures output. SIGKILL escalation on timeout, workers→maxWorkers mapping, progress streaming via onOutput callback
 
 ### Parsers (`src/parsers/`)
@@ -63,6 +63,7 @@ testfold is a unified test runner that orchestrates multiple test frameworks (Je
 - **ansi.ts** - Strip ANSI escape codes
 - **sanitize.ts** - Sanitize strings for filenames
 - **files.ts** - Directory cleanup, file writing
+- **file-filters.ts** - Matches `--file` filters against the test files each suite ran; used by the orchestrator to fail runs where a requested file selected no test
 
 ### CLI (`src/cli/`)
 
