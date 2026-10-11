@@ -160,7 +160,7 @@ import { TestRunner } from 'testfold';
 
 const runner = await TestRunner.fromConfigFile();
 const results = await runner.run();
-process.exit(results.success ? 0 : 1);
+process.exit(results.exitCode);
 ```
 
 ### 5. Artifacts

@@ -84,6 +84,14 @@ JSON summary (`summary.json`):
 }
 ```
 
+## Completion outcomes
+
+Test the result boundary with real child processes, including a child that writes valid passing JSON and then exits nonzero. Assert failed suite and aggregate status, a nonzero CLI exit, preserved assertion counts, and actionable diagnostics. A timeout or interrupted child may leave valid partial JSON; that report remains diagnostic evidence and cannot establish success.
+
+Custom parsers must return nonnegative safe-integer counts, a finite nonnegative duration, boolean `success`, and a failures array. Empty or skipped-only execution fails the suite. Playwright global errors fail independently of test statistics. Keep normal assertion failures counted once when the framework exits nonzero, and check `success` rather than only `failed` or pass rate.
+
+Optional `errorCategory` is `none`, `test_failure`, `infra_error`, or `timeout`; `none` is neutral and does not override actual failed assertions. Unknown categories are invalid parser output. Optional file inventories must be arrays of string paths, and optional test-result lists must contain string `file` paths. Interrupted or incomplete process results cannot prove a requested file filter matched nothing; completed matching and missing-file cases must be checked on the same runtime as completion outcomes.
+
 ## Test Structure
 
 ```

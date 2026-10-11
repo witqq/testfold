@@ -4,7 +4,13 @@
 
 import { join } from 'node:path';
 import type { ValidatedConfig } from '../config/schema.js';
-import type { Suite, SuiteResult, AggregatedResults, GuardResult, ErrorCategory } from '../config/types.js';
+import type {
+  Suite,
+  SuiteResult,
+  AggregatedResults,
+  GuardResult,
+  ErrorCategory,
+} from '../config/types.js';
 import { ExitCode } from '../config/types.js';
 import type { Reporter } from '../reporters/types.js';
 import type { ParseResult } from '../parsers/types.js';
@@ -58,13 +64,12 @@ export class Orchestrator {
 
   async run(suiteNames?: string[]): Promise<AggregatedResults> {
     // Filter suites if specific ones requested
-    const suitesToRun = suiteNames && suiteNames.length > 0
-      ? this.config.suites.filter(
-          (s) =>
-            suiteNames.includes(s.name) ||
-            suiteNames.includes(s.name.toLowerCase()),
-        )
-      : this.config.suites;
+    const suitesToRun =
+      suiteNames && suiteNames.length > 0
+        ? this.config.suites.filter(
+            (s) => suiteNames.includes(s.name) || suiteNames.includes(s.name.toLowerCase()),
+          )
+        : this.config.suites;
 
     if (suitesToRun.length === 0) {
       throw new Error(
@@ -186,7 +191,12 @@ export class Orchestrator {
     // Run before hook and check guard result
     if (this.config.hooks?.beforeSuite) {
       const guardResult = await this.config.hooks.beforeSuite(suite);
-      if (guardResult && typeof guardResult === 'object' && 'ok' in guardResult && !guardResult.ok) {
+      if (
+        guardResult &&
+        typeof guardResult === 'object' &&
+        'ok' in guardResult &&
+        !guardResult.ok
+      ) {
         const errorMsg = (guardResult as GuardResult).error ?? 'beforeSuite guard failed';
         const result: SuiteResult = {
           name: suite.name,
@@ -211,9 +221,7 @@ export class Orchestrator {
 
     // Determine environment
     const envConfig =
-      this.environment && suite.environments
-        ? suite.environments[this.environment]
-        : undefined;
+      this.environment && suite.environments ? suite.environments[this.environment] : undefined;
 
     // Build env variables: suite.env < envFileVars < envConfig.env
     const env: Record<string, string> = {
@@ -242,11 +250,7 @@ export class Orchestrator {
     // Determine file paths
     const resultFile = join(this.config.artifactsDir, suite.resultFile);
     const logFile =
-      suite.logFile ??
-      join(
-        this.config.artifactsDir,
-        suite.resultFile.replace('.json', '.log'),
-      );
+      suite.logFile ?? join(this.config.artifactsDir, suite.resultFile.replace('.json', '.log'));
 
     // Execute command with progress tracking
     const progress = createProgressCallback(suite.name, suite.type);
@@ -269,13 +273,40 @@ export class Orchestrator {
     let errorCategory: ErrorCategory = 'none';
 
     // Determine initial error category from executor result
-    if (execResult.exitCode === 124) {
+    if (execResult.timedOut) {
       errorCategory = 'timeout';
     }
 
     try {
       const parser = this.getParser(suite);
       parseResult = await parser.parse(resultFile, logFile);
+      if (
+        parseResult.errorCategory !== undefined &&
+        !['none', 'test_failure', 'infra_error', 'timeout'].includes(parseResult.errorCategory)
+      ) {
+        throw new Error('Parser returned an invalid error category');
+      }
+      if (
+        (parseResult.testFiles !== undefined &&
+          (!Array.isArray(parseResult.testFiles) ||
+            parseResult.testFiles.some((file) => typeof file !== 'string'))) ||
+        (parseResult.testResults !== undefined &&
+          (!Array.isArray(parseResult.testResults) ||
+            parseResult.testResults.some((test) => !test || typeof test.file !== 'string')))
+      ) {
+        throw new Error('Parser returned invalid file metadata');
+      }
+      if (
+        ![parseResult.passed, parseResult.failed, parseResult.skipped].every(
+          (count) => Number.isSafeInteger(count) && count >= 0,
+        ) ||
+        !Number.isFinite(parseResult.duration) ||
+        parseResult.duration < 0 ||
+        typeof parseResult.success !== 'boolean' ||
+        !Array.isArray(parseResult.failures)
+      ) {
+        throw new Error('Parser returned invalid counts, duration, success or failures');
+      }
     } catch (parseError) {
       // Parse failure = infrastructure error
       errorCategory = errorCategory === 'timeout' ? 'timeout' : 'infra_error';
@@ -289,43 +320,88 @@ export class Orchestrator {
           {
             testName: 'Result Parse Error',
             filePath: resultFile,
-            error:
-              parseError instanceof Error
-                ? parseError.message
-                : String(parseError),
+            error: parseError instanceof Error ? parseError.message : String(parseError),
           },
         ],
       };
     }
 
     // If no category set yet, determine from test results
-    if (errorCategory === 'none' && parseResult.errorCategory) {
+    if (
+      errorCategory === 'none' &&
+      parseResult.errorCategory &&
+      parseResult.errorCategory !== 'none'
+    ) {
       errorCategory = parseResult.errorCategory;
     } else if (errorCategory === 'none' && parseResult.failed > 0) {
       errorCategory = 'test_failure';
     }
 
-    // Success is determined by test results, not executor exit code
-    // This allows partial results from failed runs to be reported
+    // Keep partial assertion counts while treating completion as independent evidence.
+    const completionErrors: string[] = [];
+    if (execResult.timedOut) {
+      completionErrors.push('Framework process exceeded the suite timeout');
+    } else if (execResult.signal) {
+      errorCategory = 'infra_error';
+      completionErrors.push(`Framework process was interrupted by ${execResult.signal}`);
+    } else if (execResult.exitCode !== 0 && parseResult.failed === 0) {
+      errorCategory = 'infra_error';
+      completionErrors.push(`Framework process exited with code ${execResult.exitCode}`);
+    }
+    if (parseResult.failed === 0 && !parseResult.success && parseResult.failures.length === 0) {
+      errorCategory = errorCategory === 'timeout' ? 'timeout' : 'infra_error';
+      completionErrors.push('Parser reported unsuccessful framework completion');
+    }
+    if (parseResult.passed + parseResult.failed === 0 && parseResult.success) {
+      errorCategory = errorCategory === 'timeout' ? 'timeout' : 'infra_error';
+      completionErrors.push('Framework reported no executed assertions');
+    }
+    if (errorCategory === 'none' && (!parseResult.success || parseResult.failures.length > 0)) {
+      errorCategory = 'infra_error';
+    }
     const result: SuiteResult = {
       name: suite.name,
       passed: parseResult.passed,
       failed: parseResult.failed,
       skipped: parseResult.skipped,
       duration: parseResult.duration || execResult.duration,
-      success: parseResult.failed === 0 && parseResult.success !== false,
-      failures: parseResult.failures,
+      success:
+        execResult.exitCode === 0 &&
+        !execResult.signal &&
+        parseResult.failed === 0 &&
+        parseResult.success &&
+        parseResult.passed > 0 &&
+        errorCategory === 'none',
+      failures: [
+        ...parseResult.failures,
+        ...completionErrors.map((error) => ({
+          testName: 'Framework Completion',
+          filePath: '',
+          error,
+        })),
+      ],
       logFile,
       resultFile,
       testResults: parseResult.testResults,
-      testFiles: errorCategory === 'timeout' ? undefined : this.getTestFiles(parseResult),
+      testFiles:
+        errorCategory === 'timeout' ||
+        execResult.timedOut ||
+        execResult.signal ||
+        (execResult.exitCode !== 0 && parseResult.failed === 0)
+          ? undefined
+          : this.getTestFiles(parseResult),
       errorCategory,
     };
 
     // Run after hook and check guard result
     if (this.config.hooks?.afterSuite) {
       const guardResult = await this.config.hooks.afterSuite(suite, result);
-      if (guardResult && typeof guardResult === 'object' && 'ok' in guardResult && !guardResult.ok) {
+      if (
+        guardResult &&
+        typeof guardResult === 'object' &&
+        'ok' in guardResult &&
+        !guardResult.ok
+      ) {
         const errorMsg = (guardResult as GuardResult).error ?? 'afterSuite guard failed';
         result.success = false;
         result.failed += 1;
@@ -367,9 +443,7 @@ export class Orchestrator {
         return new PlaywrightParser();
       case 'custom':
         if (!suite.parser) {
-          throw new Error(
-            `Suite "${suite.name}" has type "custom" but no parser path specified`,
-          );
+          throw new Error(`Suite "${suite.name}" has type "custom" but no parser path specified`);
         }
         return new CustomParserLoader(suite.parser, this.cwd);
       default:
@@ -398,7 +472,7 @@ export class Orchestrator {
     return {
       suites: results,
       totals,
-      success: totals.failed === 0,
+      success: results.every((result) => result.success) && exitCode === ExitCode.PASS,
       passRate,
       exitCode,
     };

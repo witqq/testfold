@@ -136,6 +136,8 @@ interface ParseResult {
   duration: number;
   success: boolean;
   failures: FailureDetail[];
+  errorCategory?: 'none' | 'test_failure' | 'infra_error' | 'timeout';
+  testFiles?: string[];      // Complete executed-file inventory when known
   testResults?: TestResult[];  // For timing analysis
 }
 
@@ -175,7 +177,7 @@ interface TestResult {
 - **Test hierarchy:** Builds full name from `ancestorTitles + title` joined by ` > `
 - **Duration:** Calculated from `endTime - startTime` per test file
 - **Pending/skipped mapping:** Jest `pending` status → `skipped`
-- **Empty result file:** Returns success with 0 counts (no tests matched)
+- **Empty result file:** Fails parsing; valid zero-execution reports fail at orchestration.
 - **Produces `testResults[]`** for timing analysis
 
 ### 3.2 PlaywrightParser (`src/parsers/playwright.ts`)
@@ -194,7 +196,8 @@ interface TestResult {
 - **Retry handling:** Takes **last result** from `test.results` array (after retries)
 - **Framework crash detection:** Same patterns as Jest + `globalSetup`
 - **Corrupted JSON handling:** If `JSON.parse()` fails, falls back to log-based crash detection; returns `Result Parse Error` if no crash detected
-- **Empty/missing file:** Same as Jest — success with 0 counts
+- **Empty/missing file:** Infrastructure failure; valid zero-execution reports fail at orchestration.
+- **Global errors:** Top-level `errors[]` fail completion independently of assertion statistics.
 - **Rich failure details:** Captures from all retry attempts:
   - `stdout`: All `result.stdout[].text` across retries
   - `stderr`: All `result.stderr[].text` across retries
@@ -514,7 +517,7 @@ interface OrchestratorOptions {
 | **URL extraction** | Dynamic: `urlExtractor(envContent)` from env file content → sets `TEST_BASE_URL` |
 | **Static baseUrl** | Sets `TEST_BASE_URL` from `envConfig.baseUrl` |
 | **Graceful error recovery** | Parser failures create synthetic error result instead of throwing |
-| **Success determination** | Based on `parseResult.failed === 0 && parseResult.success !== false` (not executor exit code) |
+| **Success determination** | Requires zero process exit, no interruption, valid successful parser output and executed passing tests; completion diagnostics preserve assertion counts |
 | **Hook lifecycle** | Full beforeAll/afterAll/beforeSuite/afterSuite with guard support |
 | **Reporter notifications** | `onStart` → per-suite `onSuiteComplete` (after guard) → `onComplete` |
 
@@ -524,7 +527,7 @@ interface OrchestratorOptions {
 interface AggregatedResults {
   suites: SuiteResult[];
   totals: { passed, failed, skipped, duration };
-  success: boolean;       // totals.failed === 0
+  success: boolean;       // every suite succeeds and semantic exitCode is zero
   passRate: number;       // (passed / total) * 100, or 100 if no tests
 }
 ```
@@ -550,6 +553,8 @@ interface ExecuteOptions {
 
 interface ExecuteResult {
   exitCode: number;
+  signal?: NodeJS.Signals | null;
+  timedOut?: boolean;     // executor-enforced deadline, distinct from explicit exit 124
   stdout: string;
   stderr: string;
   duration: number;

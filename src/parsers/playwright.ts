@@ -10,6 +10,7 @@ import type { FailureDetail } from '../config/types.js';
 
 interface PlaywrightResult {
   config?: { rootDir?: string };
+  errors?: Array<{ message?: string; stack?: string }>;
   suites: PlaywrightSuite[];
   stats: {
     startTime: string;
@@ -147,6 +148,18 @@ export class PlaywrightParser implements Parser {
     const failures: FailureDetail[] = [];
     const testResults: TestResult[] = [];
 
+    if (data.errors !== undefined && !Array.isArray(data.errors)) {
+      throw new Error('Playwright global errors must be an array');
+    }
+    for (const error of data.errors ?? []) {
+      failures.push({
+        testName: 'Playwright Global Error',
+        filePath: '',
+        error: error.message ?? 'Playwright reported a global error',
+        stack: error.stack,
+      });
+    }
+
     this.collectResults(data.suites, '', failures, testResults);
 
     return {
@@ -158,7 +171,8 @@ export class PlaywrightParser implements Parser {
       failed: data.stats.unexpected,
       skipped: data.stats.skipped,
       duration: data.stats.duration,
-      success: data.stats.unexpected === 0,
+      success: data.stats.unexpected === 0 && (data.errors?.length ?? 0) === 0,
+      ...((data.errors?.length ?? 0) > 0 ? { errorCategory: 'infra_error' as const } : {}),
       failures,
       testResults,
       testFiles: this.collectTestFiles(data.suites, data.config?.rootDir),
@@ -190,9 +204,7 @@ export class PlaywrightParser implements Parser {
     testResults: TestResult[],
   ): void {
     for (const suite of suites) {
-      const suiteTitle = parentTitle
-        ? `${parentTitle} > ${suite.title}`
-        : suite.title;
+      const suiteTitle = parentTitle ? `${parentTitle} > ${suite.title}` : suite.title;
 
       for (const spec of suite.specs) {
         for (const test of spec.tests) {
@@ -221,8 +233,7 @@ export class PlaywrightParser implements Parser {
               'Unknown error';
 
             const stack =
-              lastResult.error?.stack ||
-              lastResult.errors?.map((e) => e.stack).join('\n');
+              lastResult.error?.stack || lastResult.errors?.map((e) => e.stack).join('\n');
 
             // Collect stdout/stderr/attachments from all results (all retry attempts)
             const allStdout: string[] = [];
@@ -254,8 +265,7 @@ export class PlaywrightParser implements Parser {
               stack,
               stdout: allStdout.length > 0 ? allStdout.join('\n') : undefined,
               stderr: allStderr.length > 0 ? allStderr.join('\n') : undefined,
-              attachments:
-                allAttachments.length > 0 ? allAttachments : undefined,
+              attachments: allAttachments.length > 0 ? allAttachments : undefined,
               duration: lastResult.duration,
             });
           }

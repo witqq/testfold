@@ -155,6 +155,7 @@ interface ParseResult {
   failed: number;
   skipped: number;
   duration: number;
+  success: boolean;
   failures: FailureDetail[];
 }
 ```
@@ -177,7 +178,7 @@ import type { Parser, ParseResult } from 'testfold';
 export default class MyParser implements Parser {
   async parse(jsonPath: string, logPath?: string): Promise<ParseResult> {
     // Parse logic
-    return { passed: 0, failed: 0, skipped: 0, duration: 0, success: true, failures: [] };
+    return { passed: 0, failed: 0, skipped: 0, duration: 0, success: false, failures: [] };
   }
 }
 ```
@@ -209,6 +210,8 @@ interface Reporter {
 
 ### Graceful Error Recovery
 Orchestrator attempts to parse test results even when executor returns non-zero exit code. Partial results extracted from failed runs.
+
+Suite success requires zero process exit, valid successful parser output and executed passing tests. Nonzero exit, interruption, enforced timeout, parser-declared failure, empty/skipped-only execution and Playwright global errors prevent aggregate success. Completion diagnostics preserve assertion counts; use aggregate `success` and semantic `exitCode`, never a zero failed count alone.
 
 ### Environment Routing
 Load environment-specific `.env` files via CLI flag `-e`. Supports static baseUrl or dynamic URL extraction via `urlExtractor` function.

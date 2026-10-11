@@ -439,7 +439,7 @@ npm run test:unit # Individual suite still works
 | 3 | **`envExplicit` tracking** — Moira tracks whether `--env` was explicitly passed | Low — used only for validation messages in callers | Not needed: testfold uses `undefined` when no `-e` flag; callers can check `process.env.TESTFOLD_ENV` | None needed |
 | 4 | **Remote dual env file loading** — Moira loads `.env.local` then `.env.remote` with override | Low — handled in `urlExtractor` by reading `.env.local` explicitly | Already implemented in config draft: `urlExtractor` reads `.env.local` content directly via `readEnv()` helper | 0 (done) |
 | 5 | **`--headed` as first-class CLI flag** — Moira strips `--headed` from args | Low — testfold passes it via `--` separator | Usage: `npx testfold e2e -- --headed` | None needed |
-| 6 | **Zero-test: skip vs crash distinction** — Moira distinguishes "no tests matched filter" (skip) from "framework crashed" (fail) | Low — edge case behavior | testfold treats both as success with 0 counts. If needed, `afterSuite` hook can check `result.passed === 0 && result.failed === 0` and apply custom logic | ~5 lines (optional) |
+| 6 | **Zero-test: skip vs crash distinction** — Moira distinguishes "no tests matched filter" (skip) from "framework crashed" (fail) | Low — edge case behavior | testfold fails empty or skipped-only execution; do not treat a zero failed count as proof of success | No additional guard needed |
 | 7 | **MCP_SERVER_URL dual env var** — Moira sets both `MCP_SERVER_URL` (with `/mcp`) and `TEST_BASE_URL` (without `/mcp`) | Medium — required for MCP tools tests | `beforeSuite` hook sets `MCP_SERVER_URL = TEST_BASE_URL + '/mcp'` after testfold sets `TEST_BASE_URL`. Already detailed in config draft | ~5 lines |
 | 8 | **Default env `local`** — Moira defaults to `local` when no `--env` provided | Low — behavior change: testfold requires explicit `-e local` | Update npm scripts to always include `-e` flag (see Section 5). Alternatively, add `beforeAll` hook: `if (!process.env.TESTFOLD_ENV) process.env.TESTFOLD_ENV = 'local'` | Script change only |
 
@@ -567,7 +567,7 @@ npx testfold unit -- auth
 
 - [ ] **Single test file** — `npx testfold unit -- auth` resolves `auth` to `tests/unit/auth.test.ts`
 - [ ] **Headed mode** — `npx testfold e2e -e local -- --headed` passes `--headed` to Playwright
-- [ ] **Zero tests matched** — returns success with 0 counts (no crash)
+- [ ] **Zero tests matched** — returns failed execution with no invented failed assertions
 - [ ] **Framework crash** — detected and reported with error snippet from log
 - [ ] **Per-suite cleanup** — running `npx testfold unit` does not delete `api.json` or other suites' artifacts
 

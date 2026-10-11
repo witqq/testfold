@@ -2,7 +2,10 @@
 
 Notable changes to Testfold are documented here. The project follows Semantic Versioning.
 
-## Unreleased
+## 0.4.6 — 2026-10-11
+
+- Reject false passes from nonzero or interrupted framework processes, unsuccessful parser results, empty execution and Playwright global errors while preserving partial assertion counts and normal failed-test diagnostics.
+- Preserve the actionable Jest root cause from the execution log when a crashed suite emits only the generic `Test suite failed to run` JSON message, and classify the result as an infrastructure error.
 
 ## 0.4.5 — 2026-09-24
 

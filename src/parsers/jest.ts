@@ -6,6 +6,7 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import type { Parser, ParseResult, TestResult } from './types.js';
 import type { FailureDetail } from '../config/types.js';
+import { stripAnsi } from '../utils/ansi.js';
 
 interface JestResult {
   numPassedTests: number;
@@ -78,6 +79,7 @@ export class JestParser implements Parser {
 
     const content = await readFile(jsonPath, 'utf-8');
     const data = JSON.parse(content) as JestResult;
+    const executionLog = logPath && existsSync(logPath) ? await readFile(logPath, 'utf-8') : '';
 
     const failures: FailureDetail[] = [];
     const testResults: TestResult[] = [];
@@ -98,7 +100,7 @@ export class JestParser implements Parser {
         failures.push({
           testName: 'Test Suite Crash',
           filePath: fileResult.name,
-          error: fileResult.message || 'Test suite failed to run',
+          error: this.crashMessage(fileResult.message, executionLog),
         });
         continue;
       }
@@ -132,10 +134,18 @@ export class JestParser implements Parser {
       skipped: data.numPendingTests,
       duration: totalDuration,
       success: data.success && crashedSuites === 0,
+      ...(crashedSuites > 0 ? { errorCategory: 'infra_error' as const } : {}),
       failures,
       testResults,
       testFiles: data.testResults.map((fileResult) => fileResult.name),
     };
+  }
+
+  private crashMessage(message: string, log: string): string {
+    const normalized = stripAnsi(message).replace(/^\s*●\s*Test suite failed to run\s*/u, '').trim();
+    if (normalized) return message;
+    if (log) return this.extractErrorSnippet(stripAnsi(log), 20);
+    return 'Test suite failed to run without a reported root cause';
   }
 
   private detectFrameworkCrash(log: string): boolean {

@@ -219,4 +219,7 @@ This allows incremental test runs without losing results from previous suite exe
 - Config validation errors throw immediately with detailed messages
 - Suite execution errors are captured and reported, don't stop other suites
 - Parser errors result in `success: false` with error in failures
+- Successful suites require a zero process exit, a valid successful parser result, and executed passing tests. Process interruption, enforced timeout and Playwright global errors prevent success even when parsed assertion failures are zero.
+- Completion diagnostics preserve partial assertion counts. Aggregate success requires every suite to succeed and its semantic exit code to be zero; consumers must not infer success from assertion counts alone.
+- Invalid custom categories or file metadata fail before downstream filter/reporter consumption. Incomplete process results leave file inventories unknown, so partial output cannot establish an unmatched-file failure.
 - File system errors logged but don't crash the runner
