@@ -4,11 +4,13 @@
 
 import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { isAbsolute, resolve } from 'node:path';
 import type { Parser, ParseResult, TestResult } from './types.js';
 import type { FailureDetail } from '../config/types.js';
 
 interface PlaywrightResult {
-  config: unknown;
+  config?: { rootDir?: string };
+  errors?: Array<{ message?: string; stack?: string }>;
   suites: PlaywrightSuite[];
   stats: {
     startTime: string;
@@ -146,6 +148,18 @@ export class PlaywrightParser implements Parser {
     const failures: FailureDetail[] = [];
     const testResults: TestResult[] = [];
 
+    if (data.errors !== undefined && !Array.isArray(data.errors)) {
+      throw new Error('Playwright global errors must be an array');
+    }
+    for (const error of data.errors ?? []) {
+      failures.push({
+        testName: 'Playwright Global Error',
+        filePath: '',
+        error: error.message ?? 'Playwright reported a global error',
+        stack: error.stack,
+      });
+    }
+
     this.collectResults(data.suites, '', failures, testResults);
 
     return {
@@ -157,10 +171,30 @@ export class PlaywrightParser implements Parser {
       failed: data.stats.unexpected,
       skipped: data.stats.skipped,
       duration: data.stats.duration,
-      success: data.stats.unexpected === 0,
+      success: data.stats.unexpected === 0 && (data.errors?.length ?? 0) === 0,
+      ...((data.errors?.length ?? 0) > 0 ? { errorCategory: 'infra_error' as const } : {}),
       failures,
       testResults,
+      testFiles: this.collectTestFiles(data.suites, data.config?.rootDir),
     };
+  }
+
+  /**
+   * Playwright reports spec files relative to its rootDir. Resolve them so they
+   * can be compared with the paths requested through `--file`.
+   */
+  private collectTestFiles(suites: PlaywrightSuite[], rootDir?: string): string[] {
+    const files = new Set<string>();
+    const visit = (items: PlaywrightSuite[]) => {
+      for (const suite of items) {
+        if (suite.file) {
+          files.add(rootDir && !isAbsolute(suite.file) ? resolve(rootDir, suite.file) : suite.file);
+        }
+        if (suite.suites) visit(suite.suites);
+      }
+    };
+    visit(suites);
+    return [...files];
   }
 
   private collectResults(
@@ -170,9 +204,7 @@ export class PlaywrightParser implements Parser {
     testResults: TestResult[],
   ): void {
     for (const suite of suites) {
-      const suiteTitle = parentTitle
-        ? `${parentTitle} > ${suite.title}`
-        : suite.title;
+      const suiteTitle = parentTitle ? `${parentTitle} > ${suite.title}` : suite.title;
 
       for (const spec of suite.specs) {
         for (const test of spec.tests) {
@@ -201,8 +233,7 @@ export class PlaywrightParser implements Parser {
               'Unknown error';
 
             const stack =
-              lastResult.error?.stack ||
-              lastResult.errors?.map((e) => e.stack).join('\n');
+              lastResult.error?.stack || lastResult.errors?.map((e) => e.stack).join('\n');
 
             // Collect stdout/stderr/attachments from all results (all retry attempts)
             const allStdout: string[] = [];
@@ -234,8 +265,7 @@ export class PlaywrightParser implements Parser {
               stack,
               stdout: allStdout.length > 0 ? allStdout.join('\n') : undefined,
               stderr: allStderr.length > 0 ? allStderr.join('\n') : undefined,
-              attachments:
-                allAttachments.length > 0 ? allAttachments : undefined,
+              attachments: allAttachments.length > 0 ? allAttachments : undefined,
               duration: lastResult.duration,
             });
           }

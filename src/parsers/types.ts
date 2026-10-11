@@ -18,6 +18,13 @@ export interface ParseResult {
   errorCategory?: ErrorCategory;
   /** Raw test results for timing analysis */
   testResults?: TestResult[];
+  /**
+   * Every test file the framework ran, including files that crashed before
+   * reporting a test. Used to confirm that each requested `--file` filter
+   * selected at least one test file. Custom parsers may omit it; `testResults`
+   * files are then used instead.
+   */
+  testFiles?: string[];
 }
 
 export interface Parser {

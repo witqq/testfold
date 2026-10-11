@@ -80,7 +80,7 @@ Jest unit test runner. Simplest runner — no environment routing.
 | Capture stdout+stderr in memory | `executeCommand()` — captures both streams | ✅ DIRECT | 50MB buffer limit in testfold |
 | Write combined output to `unit.log` | `executeCommand()` — writes log file with command, exit code, duration, output | ✅ DIRECT | testfold log includes metadata header |
 | Invoke parser as subprocess (`node parse-jest-results.js ...`) | `Orchestrator` invokes `JestParser.parse()` internally | ⚙️ CONFIG | No subprocess; parser called in-process |
-| Exit code = `max(framework, parser)` | `Orchestrator` — success based on `parseResult.failed === 0` (not exit code) | 🔄 PARTIAL | testfold ignores non-zero exit codes if parser finds 0 failures (graceful recovery) |
+| Exit code = `max(framework, parser)` | `Orchestrator` requires successful process and parser completion | 🔄 PARTIAL | testfold preserves partial results but returns semantic failure for nonzero completion |
 | `NODE_ENV=test` env var | Suite config `env: { NODE_ENV: 'test' }` | ⚙️ CONFIG | |
 | `NODE_OPTIONS=--experimental-vm-modules` env var | Suite config `env: { NODE_OPTIONS: '--experimental-vm-modules' }` | ⚙️ CONFIG | |
 | `.env.local` loading via `dotenv` | `loadEnvFile('local', cwd)` or suite `environments.local.envFile` | ⚙️ CONFIG | |
@@ -162,7 +162,7 @@ Orchestrator: runs all 6 suites in parallel, generates unified summary.
 | `formatNumber(num, color)` — right-pad with ANSI color | `ConsoleReporter` — internal table formatting | ✅ DIRECT | |
 | `cleanup()` — delete result JSONs (defined but never called) | `cleanSuiteArtifacts()` — cleans per-suite artifacts before run | 🔄 PARTIAL | Moira's was dead code; testfold cleans before run, not after |
 | `runTestSuiteAsync(suite, index, total)` — spawn + capture + parse | `Orchestrator.executeSuite()` — spawn → capture → parse → report | ✅ DIRECT | |
-| Zero-test handling: filter provided → skipped; no filter → crash | `JestParser` / `PlaywrightParser` — empty result = success with 0 counts | 🔄 PARTIAL | testfold treats empty as success; Moira distinguishes skip vs crash based on filter. Can add logic via `afterSuite` hook |
+| Zero-test handling: filter provided → skipped; no filter → crash | `Orchestrator` rejects zero executed assertions | 🔄 PARTIAL | testfold fails empty or skipped-only execution regardless of filter |
 | Parallel execution via `Promise.all()` for all 6 suites | `Orchestrator` with `config.parallel = true` → `Promise.all()` | ✅ DIRECT | |
 | Summary table (suite name, passed, failed, skipped, time) | `ConsoleReporter.onComplete()` — prints summary table | ✅ DIRECT | |
 | Totals row + pass rate | `ConsoleReporter` — totals row + pass rate % | ✅ DIRECT | |
@@ -213,9 +213,9 @@ Consolidated table of all unique features/capabilities across Moira scripts.
 | 27 | **Remote dual env file loading** | `.env.local` + `.env.remote` with `override: true` | Single `envFile` per environment; dual-loading via hook | 🔄 PARTIAL |
 | 28 | **`--headed` flag for Playwright** | First-class CLI flag, stripped and passed to Playwright | Pass-through: `testfold e2e -- --headed` | 🔄 PARTIAL |
 | 29 | **`envExplicit` tracking** | `detectTestEnv` returns boolean | Not tracked; env is `undefined` when absent | 🔄 PARTIAL |
-| 30 | **Zero-test: filter → skip vs no-filter → crash** | `run-all-tests.js` differentiates based on `testFileArg` | Parser returns success for empty; no crash/skip distinction | 🔄 PARTIAL |
-| 31 | **Graceful error recovery** | Parser exit code combined with framework exit code | `Orchestrator` — success from parser, not exit code | ✅ DIRECT |
-| 32 | **Exit code propagation** | `max(framework_code, parser_code)` | Process exit 1 if any failures, 0 otherwise | ✅ DIRECT |
+| 30 | **Zero-test: filter → skip vs no-filter → crash** | `run-all-tests.js` differentiates based on `testFileArg` | Zero executed assertions fail regardless of filter | 🔄 PARTIAL |
+| 31 | **Graceful error recovery** | Parser exit code combined with framework exit code | Partial results remain available without hiding failed process completion | ✅ DIRECT |
+| 32 | **Exit code propagation** | `max(framework_code, parser_code)` | Semantic exit: pass, assertion failure, infrastructure failure or timeout | 🔄 PARTIAL |
 | 33 | **Suite type: Playwright** | `run-e2e-tests.js` spawns `npx playwright test` | Suite `type: 'playwright'` auto-selects parser | ✅ DIRECT |
 | 34 | **Parser as CLI subprocess** | `node parse-jest-results.js <args>` spawned | In-process: parser called by orchestrator directly | ⚙️ CONFIG |
 | 35 | **Coverage report detection** | `parse-jest-results.js` checks `coverage/` dir for `.md` files | — | ❌ GAP |

@@ -31,6 +31,10 @@ export interface ExecuteOptions {
 
 export interface ExecuteResult {
   exitCode: number;
+  /** Signal that interrupted the process, when available. */
+  signal?: NodeJS.Signals | null;
+  /** True only when this executor enforced its deadline. */
+  timedOut?: boolean;
   stdout: string;
   stderr: string;
   duration: number;
@@ -247,7 +251,7 @@ export async function executeCommand(
       }
     });
 
-    proc.on('close', async (code) => {
+    proc.on('close', async (code, signal) => {
       if (timeoutId) clearTimeout(timeoutId);
       if (killTimer) clearTimeout(killTimer);
 
@@ -274,6 +278,8 @@ export async function executeCommand(
 
       resolve({
         exitCode: killed ? 124 : (code ?? 1),
+        signal,
+        timedOut: killed,
         stdout,
         stderr,
         duration,

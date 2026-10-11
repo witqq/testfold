@@ -176,7 +176,7 @@ Supervisor: Runs Playwright browser E2E tests with guards, progress streaming, 1
 | Guard checks: `agentAfter()` | `hooks.afterSuite` returning `GuardResult` | 🔌 HOOK | `{ ok: false, error }` adds failure to result. |
 | Guard checks: `telegramAfter()` | `hooks.afterSuite` returning `GuardResult` | 🔌 HOOK | Same mechanism. |
 | Parser invocation (spawn parse-playwright-results.js) | `PlaywrightParser.parse()` called automatically | ✅ DIRECT | testfold calls parser internally based on `suite.type: 'playwright'`. |
-| Exit code = first non-zero of (playwright, parser, guard) | testfold success = `parseResult.failed === 0 && success !== false` + guard result | ✅ DIRECT | Guards modify result.success; final exit based on aggregate. |
+| Exit code = first non-zero of (playwright, parser, guard) | testfold requires successful process, parser and guard completion | 🔄 PARTIAL | Partial assertions remain available; final exit uses semantic failure categories. |
 | `dotenv.config()` from project root | `suite.environments` or `-e` flag | ⚙️ CONFIG | Environment routing. |
 | Log file: append stdout+stderr via `appendFileSync` | `Executor` writes combined log file | ✅ DIRECT | Executor writes command, exit code, duration, stdout, stderr to log file. |
 
@@ -199,7 +199,7 @@ Supervisor: Runs Jest-based E2E tests with guards, env loading from `.env.test`.
 | Output capture (stdout + stderr buffering) | `Executor` captures and writes to log file | ✅ DIRECT | 50MB buffer limit, written to suite log file. |
 | Guard checks: agent + telegram `afterTests()` | `hooks.afterSuite` returning `GuardResult` | 🔌 HOOK | Both guards checked in single afterSuite hook. |
 | Parser invocation via spawn | `JestParser.parse()` called automatically | ✅ DIRECT | Internal call based on `suite.type: 'jest'`. |
-| Exit code = first non-zero | Success based on parse result + guard | ✅ DIRECT | Same logic. |
+| Exit code = first non-zero | Success requires process, parser and guard completion | 🔄 PARTIAL | Semantic categories distinguish assertions, infrastructure errors and timeout. |
 
 ---
 

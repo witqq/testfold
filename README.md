@@ -199,6 +199,20 @@ export default {
 
 Returning `void` or `undefined` is treated as success (backward compatible).
 
+### File Filters
+
+`--file` (`-f`) values are passed to Jest and Playwright as positional test-path filters, which the frameworks treat as regular expressions searched in each test file's path; Playwright also accepts a `:line` suffix. The frameworks combine several filters as a union, so testfold checks each requested filter after the run:
+
+- A filter must select at least one test file that one of the selected suites ran. A filter that matches a file in any selected suite is satisfied; it does not have to match every suite.
+- Each filter that selected no test file in any selected suite is recorded as an infrastructure failure named `Unmatched File Filter: <filter>`, attached to the first selected suite. The run fails with exit code `2`, even when other filters matched and their tests passed.
+- The check applies only when every selected suite ran and reported the test files it executed. When a suite was skipped by fail-fast, stopped by a `beforeSuite` guard, timed out, interrupted by a signal, exited nonzero without failed assertions, produced no result file, or uses a custom parser that reports neither `testFiles` nor a complete `testResults` list, the check is skipped because the filter may belong to that suite; such a run already fails or depends on that suite's own result.
+
+With `--file`, reporters receive each suite's result after all selected suites finish, so a suite is never shown as passed before the check.
+
+Custom parsers can return `testFiles` (the test files the framework ran) in their `ParseResult` to take part in the check.
+
+Optional `testFiles` must be an array of strings. Optional `testResults` must be an array whose entries have string `file` paths. Invalid metadata is reported as an infrastructure error before filter evaluation or reporting.
+
 ### Path Prefix Resolution
 
 Pass partial test file names and testfold resolves them to full paths:
@@ -220,6 +234,10 @@ export default {
 ### Graceful Error Recovery
 
 Even when tests crash or timeout, testfold attempts to parse partial results. Non-zero exit codes don't prevent result extraction.
+
+A suite passes only when its process completes with exit code zero and its parser reports valid, successful execution with at least one passing test. A nonzero exit, interruption, enforced timeout, unsuccessful parser result, Playwright global error, or empty/skipped-only run fails the suite and aggregate result. Partial assertion counts remain available; completion diagnostics do not add invented failed assertions. A normal failed-test report with a nonzero framework exit retains its original failed-test count.
+
+Use `success` and the CLI exit code to decide whether a run passed. `failed: 0` and a 100% assertion pass rate can accompany an infrastructure failure; details appear in the suite failures, logs, and summary errors.
 
 ### Per-Suite Artifact Cleanup
 

@@ -137,6 +137,7 @@ export class JestParser implements Parser {
       ...(crashedSuites > 0 ? { errorCategory: 'infra_error' as const } : {}),
       failures,
       testResults,
+      testFiles: data.testResults.map((fileResult) => fileResult.name),
     };
   }
 

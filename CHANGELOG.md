@@ -4,9 +4,12 @@ Notable changes to Testfold are documented here. The project follows Semantic Ve
 
 ## Unreleased
 
-## 0.4.5 — 2026-09-09
-
+- Reject false passes from nonzero or interrupted framework processes, unsuccessful parser results, empty execution and Playwright global errors while preserving partial assertion counts and normal failed-test diagnostics.
 - Preserve the actionable Jest root cause from the execution log when a crashed suite emits only the generic `Test suite failed to run` JSON message, and classify the result as an infrastructure error.
+
+## 0.4.5 — 2026-09-24
+
+- Fail the run with exit code 2 and name each `--file` filter that selected no test file in any selected suite, instead of silently dropping it when another filter matched. A filter that matches a file in another selected suite is not an error.
 
 ## 0.4.4 — 2026-09-07
 

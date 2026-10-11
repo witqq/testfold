@@ -22,6 +22,7 @@ const VALID_JEST_JSON = JSON.stringify({
   numPassedTests: 3,
   numFailedTests: 0,
   numPendingTests: 0,
+  success: true,
   testResults: [],
 });
 
@@ -43,12 +44,14 @@ describe('Orchestrator guard-aware hooks', () => {
 
   function makeConfig(hooks: ValidatedConfig['hooks'] = {}): ValidatedConfig {
     return {
-      suites: [{
-        name: 'test-suite',
-        type: 'jest',
-        command: 'echo done',
-        resultFile: 'guard-test.json',
-      }],
+      suites: [
+        {
+          name: 'test-suite',
+          type: 'jest',
+          command: 'echo done',
+          resultFile: 'guard-test.json',
+        },
+      ],
       artifactsDir: tempDir,
       parallel: false,
       failFast: false,

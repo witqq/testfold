@@ -36,7 +36,7 @@ testfold is a unified test runner that orchestrates multiple test frameworks (Je
 ### Core Layer (`src/core/`)
 
 - **runner.ts** - `TestRunner` class, main entry point. Creates reporters (built-in + custom from file paths)
-- **orchestrator.ts** - Coordinates suite execution (parallel/sequential), guard-aware hooks, filter flag passing
+- **orchestrator.ts** - Coordinates suite execution (parallel/sequential), guard-aware hooks, filter flag passing, and `--file` coverage: a requested file that selected no test in any selected suite fails the run with exit code 2
 - **executor.ts** - Spawns child processes with `detached: true`, captures output. SIGKILL escalation on timeout, workers→maxWorkers mapping, progress streaming via onOutput callback
 
 ### Parsers (`src/parsers/`)
@@ -63,6 +63,7 @@ testfold is a unified test runner that orchestrates multiple test frameworks (Je
 - **ansi.ts** - Strip ANSI escape codes
 - **sanitize.ts** - Sanitize strings for filenames
 - **files.ts** - Directory cleanup, file writing
+- **file-filters.ts** - Matches `--file` filters against the test files each suite ran; used by the orchestrator to fail runs where a requested file selected no test
 
 ### CLI (`src/cli/`)
 
@@ -218,4 +219,7 @@ This allows incremental test runs without losing results from previous suite exe
 - Config validation errors throw immediately with detailed messages
 - Suite execution errors are captured and reported, don't stop other suites
 - Parser errors result in `success: false` with error in failures
+- Successful suites require a zero process exit, a valid successful parser result, and executed passing tests. Process interruption, enforced timeout and Playwright global errors prevent success even when parsed assertion failures are zero.
+- Completion diagnostics preserve partial assertion counts. Aggregate success requires every suite to succeed and its semantic exit code to be zero; consumers must not infer success from assertion counts alone.
+- Invalid custom categories or file metadata fail before downstream filter/reporter consumption. Incomplete process results leave file inventories unknown, so partial output cannot establish an unmatched-file failure.
 - File system errors logged but don't crash the runner
